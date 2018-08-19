@@ -28,21 +28,24 @@
 % Fixes weird hyperref and algorithmic behavior
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 
-% Used modified ICM template
+% Used modified ICML template
 \usepackage[accepted]{icml2013}
 
 % Short title
-\icmltitlerunning{A Survey of Model Interpretation Tools with Practical Recommendations}
+\icmltitlerunning{A Discussion of Model Explanation Tools}
 
 \begin{document} 
 
 \twocolumn[
-\icmltitle{A Survey of Model Interpretation Tools\\
+\icmltitle{A Discussion of Model Explanation Tools\\
            with Practical Recommendations}
 
 % Authors
 \icmlauthor{Patrick Hall}{phall@h2o.ai}
-\icmladdress{\href{https://www.h2o.ai}{H2O.ai}, Mountain View, CA}
+%\icmladdress{\href{https://www.h2o.ai}{H2O.ai}, Mountain View, CA}
+\icmlauthor{Wen Phan}{wen.phan@mac.com}
+\icmlauthor{Lauren Diperna}{laurend@h2o.ai}
+%\icmladdress{\href{https://www.h2o.ai}{H2O.ai}, Mountain View, CA}
 %\icmlauthor{Your CoAuthor's Name}{email@coauthordomain.edu}
 %\icmladdress{Their Fantastic Institute,
 %            27182 Exp St., Toronto, ON M6H 2T1 CANADA}
@@ -58,7 +61,7 @@
 \begin{abstract} 
 %----------------------------------------------------------------------
 	
-This paper analyzes several debugging and explanatory approaches beyond the error measures and assessment plots typically used to interpret machine learning models. The approaches: decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, Shapley explanations vary in terms of scope (i.e. global vs. local), fidelity (i.e. the exactness of generated explanations), and suitable application domains. Along with descriptions of the techniques, findings regarding explanation trustworthiness and practical guidance for usage are also presented.
+This paper discusses several explanatory methods that go beyond the error measurements and plots traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domains. Along with descriptions of the methods, practical guidance for usage is also presented.
 
 \end{abstract} 
 
@@ -66,23 +69,31 @@ This paper analyzes several debugging and explanatory approaches beyond the erro
 \section{Introduction}
 %----------------------------------------------------------------------
 
-While understanding and trusting models and their results is a hallmark of good (data) science, model interpretability is a legal mandate in the regulated verticals of many major industries. Moreover, scientists, physicians, researchers, analysts, and humans in general have the need to understand and trust models and modeling results that affect their work and their lives. Today many organizations and individuals are embracing machine learning but what happens when people need to explain these impactful, complex technologies to one-another or when these technologies inevitably make mistakes? 
+Interpretability of statistical and machine learning predictive models is a multifaceted, complex, and evolving subject. This paper focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. Others have defined key terms and put forward general motivations for better intepretability of predictive models \cite{lipton1}, \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}. Following Doshi-Velez and Kim \yrcite{been_kim1}, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
+	
+\begin{figure}[htb]
+	\begin{center}
+		\includegraphics[height=140pt]{img/learning_problem.png}
+		\label{fig:learning_problem}
+		\caption{An augmented learning problem diagram in which several techniques create explanations for a credit scoring model \cite{lfd}.}
+	\end{center}
+\end{figure}	
+	
+As in Figure \ref{fig:learning_problem}, the explanatory presented methods help practicioners make random forests, GBMs, and other types of popular predictive models more interpretable by enabling post-hoc explanations that are suitable for:
 
 \begin{itemize}
-	
-	\item \textbf{What is interpretation?} “The	ability	to explain or to present in understandable terms to	a human.” \cite{been_kim1}
-	
-	\item \textbf{What is a good interpretation?} "When you can no longer keep asking why." \cite{gilpin2018explaining}
-	
-	\item \textbf{Why should you care?}
-	\begin{itemize}
-		\item Understanding of an impactful and quickly expanding set of technologies. 
-		\item Addressing accidental or intentional discrimination.
-		\item Preventing malicious hacking and adversarial attacks.
-		\item Enabling regulatory compliance and increased financial margins.
-	\end{itemize}
-	
+	\item facilitating regulatory compliance
+	\item preventing or addressing accidental or intentional discrimination
+	\item preventing or addressing malicious hacking or adversarial attacks
 \end{itemize}
+
+and other predictive modeling endeavors. 
+
+Discussions of the explanatory methods begin by defining notation for training algorithm input and output spaces and for training data sets. Then sections \ref{sec:notation} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, section \ref{sec:software} highlights a few accompanying software resources. 
+
+%-------------------------------------------------------------------------------
+\section{Notation} \label{sec:notation}
+%-------------------------------------------------------------------------------
 
 \begin{itemize}
 	\item \textbf{Spaces}.  
@@ -101,16 +112,11 @@ While understanding and trusting models and their results is a hallmark of good 
 	\end{itemize}
 \end{itemize}
 
-\begin{figure}[htb]
-	\begin{center}
-		\includegraphics[height=140pt]{img/learning_problem.png}
-		\label{fig:learning_problem}
-	\end{center}
-\end{figure}
+%-------------------------------------------------------------------------------
+\section{Surrogate Decision Trees} \label{sec:surrogate_dt}
+%-------------------------------------------------------------------------------
 
-%-------------------------------------------------------------------------------
-\section{Surrogate DT}
-%-------------------------------------------------------------------------------
+% mention "proxy" and "shadow" 
 
 \begin{figure}[htb]
 	\begin{center}
@@ -141,7 +147,8 @@ While understanding and trusting models and their results is a hallmark of good 
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\section{PD and ICE}
+\section{Partial Dependence and Individual Conditional Expectation (ICE) plots}
+\label{sec:pd_ice}
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
@@ -179,7 +186,8 @@ Overlaying PD and ICE curves is a succinct method for describing global and loca
 Combining Surrogate DT models with PD and ICE curves is a convenient method for detecting, confirming, and understanding important interactions.
 
 %-------------------------------------------------------------------------------
-\section{LIME}
+\section{Local Interpretable Model-agnostic Explanations (LIME)}
+\label{sec:lime}
 %-------------------------------------------------------------------------------
 
 \cite{lime} defines LIME for some observation $\mathbf{x} \in \mathcal{X}$:
@@ -235,7 +243,7 @@ where $\mathbf{X}^{(*)}$ is a generated sample, $\pi_{\mathbf{X}}$ weighs $\math
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\section{Tree Shap}
+\section{Tree Shap} \label{sec:shap}
 %-------------------------------------------------------------------------------
 
 Shapley explanations are a class of additive, consistent local feature importance measures with long-standing theoretical support, \cite{shapley}. For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
@@ -271,7 +279,7 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\section{Recommendations}
+\section{General Recommendations} \label{sec:gen_rec}
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
@@ -293,7 +301,17 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\section{Software}
+\section{Suggested Reading} \label{sec:suggested}
+%-------------------------------------------------------------------------------
+
+\begin{itemize}
+\item xNN derivatives, neural net-specific methods.
+\item Accurate and interpretable classifiers.
+\item Fairness.
+\end{itemize} 
+
+%-------------------------------------------------------------------------------
+\section{Software Resources} \label{sec:software}
 %-------------------------------------------------------------------------------
 
 \sloppy
@@ -313,10 +331,15 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 
 \fussy
 
+%-------------------------------------------------------------------------------
+\section{Acknowledgements} 
+%-------------------------------------------------------------------------------
+
+% Mark Chan, Lingyao, Leland, others? Zach Lipton
+
 %----------------------------------------------------------------------
 % References
 %----------------------------------------------------------------------
-
 
 \Urlmuskip=0mu plus 1mu\relax
 \bibliographystyle{icml2013}
