@@ -58,7 +58,7 @@
 \begin{abstract} 
 %----------------------------------------------------------------------
 	
-This paper discusses several explanatory methods that go beyond the error measurements and plots traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domains. Along with descriptions of the methods, practical guidance for usage is also presented.
+This paper discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain. Along with descriptions of these methods, practical guidance for usage and in-depth software examples are also presented.
 
 \end{abstract} 
 
@@ -66,48 +66,59 @@ This paper discusses several explanatory methods that go beyond the error measur
 \section{Introduction}
 %----------------------------------------------------------------------
 
-Interpretability of statistical and machine learning predictive models is a multifaceted, complex, and evolving subject. This paper focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. Others have defined key terms and put forward general motivations for better intepretability of predictive models \cite{lipton1}, \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}. Following Doshi-Velez and Kim \yrcite{been_kim1}, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
+Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This paper focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. Others have defined key terms and put forward general motivations for better intepretability of machine learning models \cite{lipton1}, \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}. Following Doshi-Velez and Kim \yrcite{been_kim1}, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
 	
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[height=140pt]{img/learning_problem.png}
 		\label{fig:learning_problem}
-		\caption{An augmented learning problem diagram in which several techniques create explanations for a credit scoring model \cite{lfd}.}
+		\caption{An augmented learning problem diagram in which several techniques create explanations for a credit scoring model. Adapted from \textbf{Learning From Data} \cite{lfd}.}
 	\end{center}
 \end{figure}	
 	
-As in Figure \ref{fig:learning_problem}, the explanatory presented methods help practicioners make random forests, GBMs, and other types of popular predictive models more interpretable by enabling post-hoc explanations that are suitable for:
+As in Figure \ref{fig:learning_problem}, the presented explanatory methods help practicioners make random forests, GBMs, and other types of popular supervised  machine learning models more interpretable by enabling post-hoc explanations that are suitable for:\\
 
 \begin{itemize}
-	\item facilitating regulatory compliance
-	\item preventing or addressing accidental or intentional discrimination
-	\item preventing or addressing malicious hacking or adversarial attacks
+	\item Facilitating regulatory compliance.
+	\item Understanding or debugging model mechanisms and predictions.
+	\item Preventing or debugging accidental or intentional discrimination in model predictions.
+	\item Preventing or debugging malicious hacking of models or adversarial attacks on models.
 \end{itemize}
 
-and other predictive modeling endeavors. 
-
-Discussions of the explanatory methods begin by defining notation for training algorithm input and output spaces and for training data sets. Then sections \ref{sec:notation} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, section \ref{sec:software} highlights a few accompanying software resources. 
+Detailed discussions of the explanatory methods begin below by defining notation. Then sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, section \ref{sec:software} highlights a few software resources that accompany this paper. 
 
 %-------------------------------------------------------------------------------
 \section{Notation} \label{sec:notation}
 %-------------------------------------------------------------------------------
 
-\begin{itemize}
-	\item \textbf{Spaces}.  
+To facilitate technical descriptions of explanatory techniques, notation for input and output spaces, for datasets, and for models is defined.
+
+\subsection{Spaces} 
+ 
 	\begin{itemize}
-		\item The input features come from a set  $\mathcal{X}$ contained in a \textit{P}-dimensional input space\\ (i.e. $\mathcal{X} \subset \mathbb{R}^P)$.  
-		\item The output responses come from a set $\mathcal{Y}$ contained in a $C$-dimensional output space (i.e. $\mathcal{Y} \subset \mathbb{R}^C$).
+		\item Input features come from a set $\mathcal{X}$ contained in a \textit{P}-dimensional input space, $\mathcal{X} \subset \mathbb{R}^P$.  
+		\item Known labels corresponding to instances of $\mathcal{X}$ come from the set $\mathcal{Y}$ and are contained in a $C$-dimensional label space, $\mathcal{Y} \subset \mathbb{R}^C$.
+		\item Learned output responses come from a set $\mathcal{\hat{Y}}$. For regression models, the set $\mathcal{\hat{Y}}_r$ is also contained in a $C$-dimensional output space, $\mathcal{\hat{Y}}_r \subset \mathbb{R}^{C_r}$. For classification models, the set $\mathcal{\hat{Y}}_c$ typically contains a column vector for each unique class in $\mathcal{Y}$. Hence, $\mathcal{\hat{Y}}_c$ is contained in a $C'$-dimensional output space,  $\mathcal{\hat{Y}}_c \subset \mathbb{R}^{C'_c}$.
 	\end{itemize}	
-	\bigskip	
-	\item \textbf{Dataset}. A dataset $\mathbf{D}$ consists of $N$ tuples of observations:\\ $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots, (\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})], \mathbf{x}^{(i)} \in \mathcal{X}, \mathbf{y}^{(i)} \in \mathcal{Y}$.\\
+	
+\subsection{Datasets} 
+
 	\begin{itemize}
-		\item The input data $\mathbf{X}$ is composed of the set of row vectors $\mathbf{x}^{(i)}$. 
-		\begin{itemize}
-			\item let $\mathcal{P}$ be the set of features  $\{X_0, X_1, \dots, X_{P-1}\}$, where $X_j = \left[x_{j}^{(0)}, x_{j}^{(1)}, \dots, x_{j}^{(N-1)} \right]^T$.
-			\item then each $i$-th observation denoted as $\mathbf{x}^{(i)} = \left[x_0^{(i)}, x_1^{(i)}, \dots, x_{P-1}^{(i)} \right]$ is an instance of $\mathcal{P}$.
-		\end{itemize}
+		\item The input dataset $\mathbf{X}$ is composed of observed instances of the set $\mathcal{X}$ with a corresponding dataset of labels $\mathbf{Y}$, observed instances of the set $\mathcal{Y}$.
+		\item Each $i$-th observation of $\mathbf{X}$ is denoted as $\mathbf{x}^{(i)} = $ \\ 
+		$[x_0^{(i)}, x_1^{(i)}, \dots, x_{\textit{P}-1}^{(i)}]$, with corresponding $i$-th \\ labels in $\mathbf{Y}, \mathbf{y}^{(i)} = [y_0^{(i)}, y_1^{(i)}, \dots, y_{\textit{C}-1}^{(i)}]$.
+		\item $\mathbf{X}$ and $\mathbf{Y}$ consists of $N$ tuples of observations:\\ $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots, (\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})]$, \\ $\mathbf{x}^{(i)} \in \mathcal{X}$, $\mathbf{y}^{(i)} \in \mathcal{Y}$.
+		\item Each $j$-th input column vector of $\mathbf{X}$ is denoted as $X_j = [x_{j}^{(0)}, x_{j}^{(1)}, \dots, x_{j}^{(N-1)}]^T$.
+	\end{itemize}	 
+
+\subsection{Models}
+
+	\begin{itemize}
+		\item A machine learning model $g$, selected from a hypothesis set $\mathcal{H}$, is trained to represent an unknown target function $f$ observed as  $\mathbf{X}$ with labels $\mathbf{Y}$ using a training algorithm $\mathcal{A}$: 
+		$ \mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A}} g$.
+		\item $g$ generates learned output responses on the input dataset $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and on the general input space $g(\mathcal{X}) = \mathcal{\hat{Y}}$.
+		\item The model to be explained is denoted as $g$.
 	\end{itemize}
-\end{itemize}
 
 %-------------------------------------------------------------------------------
 \section{Surrogate Decision Trees} \label{sec:surrogate_dt}
