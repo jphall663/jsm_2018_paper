@@ -76,7 +76,7 @@ Interpretability of statistical and machine learning models is a multifaceted, c
 	\end{center}
 \end{figure}	
 	
-As in Figure \ref{fig:learning_problem}, the presented explanatory methods help practicioners make random forests, GBMs, and other types of popular supervised  machine learning models more interpretable by enabling post-hoc explanations that are suitable for:\\
+As in figure \ref{fig:learning_problem}, the presented explanatory methods help practicioners make random forests, GBMs, and other types of popular supervised  machine learning models more interpretable by enabling post-hoc explanations that are suitable for:\\
 
 \begin{itemize}
 	\item Facilitating regulatory compliance.
@@ -124,22 +124,6 @@ To facilitate technical descriptions of explanatory techniques, notation for inp
 \section{Surrogate Decision Trees} \label{sec:surrogate_dt}
 %-------------------------------------------------------------------------------
 
-\begin{figure}
-	\begin{center}
-		\includegraphics[height=200pt]{img/global_shapley.png}
-		\caption{Shapley summary plot for known target function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for a machine-learned GBM response function $g_{\text{GBM}}$.}
-		\label{fig:global_shapley}
-	\end{center}
-\end{figure}
-
-\begin{figure*}[t]
-	\begin{center}
-		\includegraphics[height=150pt]{img/dt_surrogate3.png}
-		\caption{$h_{\text{tree}}$ for known target function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for a machine-learned GBM response function $g_{\text{GBM}}$.}
-		\label{fig:dt_surrogate}
-	\end{center}
-\end{figure*}
-
 The phrase \textit{surrogate model} is used here to refer to a simple model, $h$, of a complex model, $g$. This type of model is referred to by various other names, such as \textit{proxy} or \textit{shadow} models and the process of training surrogate models is often referred to as \textit{model extraction} \cite{dt_surrogate1}, \cite{ff_interpretability},  \cite{dt_surrogate2}. 
 
 \subsection{Description}
@@ -154,6 +138,14 @@ such that $h_{\text{tree}}(\mathbf{X}) \approx g(\mathbf{X})$.
 
 Decision trees can be represented as directed graphs where the relative positions of input variables can provide insight into their importance and interactions \\ \cite{cart}. This makes decision trees useful surrogate models. Input variables that appear high and often in the directed graph representation of $h_{\text{tree}}$ are assumed to have high importance in $g$. Input variables directly above or below one-another in $h_{\text{tree}}$ are assumed to have have strong interactions in $g$. These relative relationships between input variables in $h_{\text{tree}}$ can be used to verify and debug the variable importance, interactions, and predictions of $g$.
 
+\begin{figure}
+	\begin{center}
+		\includegraphics[height=200pt]{img/global_shapley.png}
+		\caption{Shapley summary plot for known target function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for a machine-learned GBM response function $g_{\text{GBM}}$.}
+		\label{fig:global_shapley}
+	\end{center}
+\end{figure}
+
 Figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} use simulated data to emperically demonstrate the desired relationships between input variable importance and interactions in the input space $\mathbf{X}$, the label space $f(\mathbf{X}) = \mathbf{Y}$, a GBM model to be explained $g_{\text{GBM}}$, and a decision tree surrogate $h_{\text{tree}}$. Data with a known target function depending on four input variables with interactions: 
 
 \begin{equation}
@@ -163,15 +155,23 @@ f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e
 
 and with eight noise variables is simulated. $g_{\text{GBM}}$ is trained: $ \mathbf{X}, \mathbf{f(X)} \xrightarrow{\mathcal{A}} g_{\text{GBM}}$ such that $g_{\text{GBM}} \approx f$. Then $h_{\text{tree}}$ is extracted by $\mathbf{X}, \mathbf{g_{\text{GBM}}(X)} \xrightarrow{\mathcal{A}} h_{\text{tree}}$, such that $h_{\text{tree}}(\mathbf{X}) \approx g_{\text{GBM}}(\mathbf{X}) \approx f(\mathbf{X})$.
 
-Figure \ref{fig:global_shapley} displays the local Shapley importance values for an input variable's impact on each $g_{\text{GBM}}(\mathbf{X})$ prediction. Plotting Shapley values can be a more wholistic and consistent variable importance metric than traditional single-value quantities \cite{shapley}. As expected, Figure \ref{fig:global_shapley} shows that $\text{num}_9$ and $\text{num}_8$ tend to make the largest contributions to $g_{\text{GBM}}(\mathbf{X})$ followed by $\text{num}_4$ and $\text{num}_1$. Also as expected, noise variables make minimal contributions to $g_{\text{GBM}}(\mathbf{X})$. Shapley values are discussed in detail in section \ref{sec:shap}.
+Figure \ref{fig:global_shapley} displays the local Shapley importance values for an input variable's impact on each $g_{\text{GBM}}(\mathbf{X})$ prediction. Plotting Shapley values can be a more wholistic and consistent variable importance metric than traditional single-value quantities \cite{shapley}. As expected, figure \ref{fig:global_shapley} shows that $\text{num}_9$ and $\text{num}_8$ tend to make the largest contributions to $g_{\text{GBM}}(\mathbf{X})$ followed by $\text{num}_4$ and $\text{num}_1$. Also as expected, noise variables make minimal contributions to $g_{\text{GBM}}(\mathbf{X})$. Shapley values are discussed in detail in section \ref{sec:shap}.
 
-Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tree}}$ that prominently displays the importance of input variables $\text{num}_9$ and $\text{num}_8$ and also visually highlights the interactions between the two inputs. URLs to the data and software used to generate Figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} are available in section \ref{sec:software}.
+Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tree}}$ that prominently displays the importance of input variables $\text{num}_9$ and $\text{num}_8$ along $\text{num}_4$ and $\text{num}_1$. Figure \ref{fig:dt_surrogate} also visually highlights the interactions between these inputs. URLs to the data and software used to generate figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} are available in section \ref{sec:software}.
+
+\begin{figure}[htb]
+	\begin{center}
+		\includegraphics[height=140pt]{img/dt_surrogate4.png}
+		\caption{$h_{\text{tree}}$ for known target function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for a machine-learned GBM response function $g_{\text{GBM}}$.}
+		\label{fig:dt_surrogate}
+	\end{center}
+\end{figure}
 
 \subsection{Recommendations}
 
 \begin{itemize}
 	
-	\item A shallow-depth $h_{\text{tree}}$ displays a global, low-fidelity, high-\\interpretability flow chart of important features and interactions in $g$. Because there are few theoretical gaurantees that $h_{\text{tree}}$ truly represents $g$, always use error measures to assess the trustworthiness of $h_{\text{tree}}$.
+	\item A shallow-depth $h_{\text{tree}}$ displays a global, low-fidelity, high-interpretability flow chart of important features and interactions in $g$. Because there are few theoretical gaurantees that $h_{\text{tree}}$ truly represents $g$, always use error measures to assess the trustworthiness of $h_{\text{tree}}$.
 	
 	\item Prescribed methods \cite{dt_surrogate1}; \cite{dt_surrogate2} for training $h_{\text{tree}}$ do exist. In practice, straightforward cross-validation approaches are typically sufficient. Moreover, comparing cross-validated training error to traditional training error can give an indication of the stability of the single tree, $h_{\text{tree}}$.
 	
@@ -184,30 +184,33 @@ Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tr
 \label{sec:pd_ice}
 %-------------------------------------------------------------------------------
 
-Partial dependence (PD) plots are a well-known method for describing the average predictions of a complex model, $g$, across some partition of data, $\mathbf{X}$, for some interesting input variable, $X_j$ \cite{esl}. Individual conditional expectation (ICE) plots are a newer method that describes the local behavior of $g$ for a single perturbed instance of $\mathbf{X}$, $x^{(i)}$ \cite{ice_plots}. Partial depoendence and ICE can be combined in the same plot to identify strong interactions modeled by $g$ and to create a wholistic portrait of the predictions of a complex model for some interesting input variable, $X_j$.
+Partial dependence (PD) plots are a well-known method for describing the average predictions of a complex model, $g$, across some partition of data, $\mathbf{X}$, for some interesting input variable, $X_j$ \cite{esl}. Individual conditional expectation (ICE) plots are a newer method that describes the local behavior of $g$ for a single instance of $\mathbf{X}$, $\mathbf{x}^{(i)}$ \cite{ice_plots}. Partial dependence and ICE can be combined in the same plot to identify strong interactions modeled by $g$ and to create a wholistic portrait of the predictions of a complex model for some interesting input variable, $X_j$.
 
 \subsection{Description}
 	
-Following Friedman et al. (\citeyear{esl}) a single feature $X_j \in \mathbf{X}$ and its complement set $X_{(-j)} \in \mathbf{X}$ (where $X_j \cup X_{(-j)} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function $g$ when all the components of $X_j$ are set to a constant $x \in \mathcal{X}$ and $X_{(-j)}$ is left untouched. $\text{ICE}(X_j, \mathbf{x}^{(i)}, g)$ for a given observation $\mathbf{x}^{(i)}$ and feature $X_j$ is estimated as the output of the learned function $g$ when $x^{(i)}_j$ is set to a constant $x \in \mathcal{X}$ and all $\mathbf{x}^{(i)} \in X_{(-j)}$ are left untouched. PD and ICE curves are usually plotted over some set of interesting constants $x \in \mathcal{X}$. 
+Following Friedman et al. (\citeyear{esl}) a single feature $X_j \in \mathbf{X}$ and its complement set $\mathbf{X}_{(-j)} \in \mathbf{X}$ (where $X_j \cup \mathbf{X}_{(-j)} = \mathbf{X}$) is considered. $\text{PD}(X_j, g)$ for a given feature $X_j$ is estimated as the average output of the learned function, $g(\mathbf{X})$, when all the components of $X_j$ are set to a constant $x \in \mathcal{X}$ and $\mathbf{X}_{(-j)}$ is left untouched. $\text{ICE}(X_j, \mathbf{x}^{(i)}, g)$ for a given observation $\mathbf{x}^{(i)}$ and feature $X_j$ is estimated as the output of the learned function, $g(\mathbf{x}^{(i)})$, when $x^{(i)}_j$ is set to a constant $x \in \mathcal{X}$ and all $\mathbf{x}^{(i)} \in \mathbf{X}_{(-j)}$ are left untouched. Partial dependence and ICE curves are usually plotted over some set of interesting constants $\mathbf{x} \in \mathcal{X}$. 
 
 \begin{figure}[htb]
 	\begin{center}
-		\includegraphics[height=120pt]{img/pdp_ice.png}
+		\includegraphics[height=125pt]{img/pdp_ice.png}
 		\caption{Partial dependence and ICE curves for $ X_j = \text{num}_9$, for known signal generating function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for machine-learned GBM response function $g_{\text{GBM}}$.}
 		\label{fig:pdp_ice}
 	\end{center}
 \end{figure}
 
-As in section \ref{sec:surrogate_dt}, simulated data is used to highlight desirable characteristics of partial dependence and ICE plots. In Figure \ref{fig:pdp_ice} partial dependence and ICE at the minimum, maximum, and each decile of $g_{\text{GBM}}$ are plotted. The known quadratic behavior of $\text{num}_9$ is plainly visible, except for high value predictions, the 80\textsuperscript{th} percentiles of $g_{\text{GBM}}(\mathbf{X})$ and above, and for $\sim-1 < \text{num}_9 < \sim1$. When partial dependence and ICE curves diverge, this often points to an interaction that is being averaged out of the partial dependence. Given the form of \ref{eq:f}, there is a known interaction between $\text{num}_9$ and $\text{num}_8$ and in Figure \ref{fig:dt_surrogate}, every path through $h_{\text{tree}}$ that includes a $\text{num}_8$ yields a higher prediction 
-
-% need bigger, deep DT surrogate to find interactions between num8 and num9 between ~-1 - ~1. Put figure on top of page, all the way across. 
-
-
-the highest predictions from $h_{\text{tree}}$ occurs when a decision path contains a split based 
+As in section \ref{sec:surrogate_dt}, simulated data is used to highlight desirable characteristics of partial dependence and ICE plots. In figure \ref{fig:pdp_ice} partial dependence and ICE at the minimum, maximum, and each decile of $g_{\text{GBM}}(\mathbf{X})$ are plotted. The known quadratic behavior of $\text{num}_9$ is plainly visible, except for high value predictions, the 80\textsuperscript{th} percentiles of $g_{\text{GBM}}(\mathbf{X})$ and above and for $\sim-1 < \text{num}_9 < \sim1$. When partial dependence and ICE curves diverge, this often points to an interaction that is being averaged out of the partial dependence. Given the form of equation \ref{eq:f}, there is a known interaction between $\text{num}_9$ and $\text{num}_8$. Combining the information from partial dependence and ICE plots with $h_{tree}$ can help elucidate more detailed information about modeled interactions in $g$. For the simulated example, $h_{tree}$ shows an interaction between $\text{num}_9$ and $\text{num}_8$ and additional modeled interactions between $\text{num}_9$, $\text{num}_4$, and $\text{num}_1$ for $\sim -0.92 \le \text{num}_9 < \sim 1.04.$ URLs to the data and software used to generate figure \ref{fig:pdp_ice} are available in section \ref{sec:software}.
 
 \subsection{Recommendations}
 
-%Combining Surrogate DT models with PD and ICE curves is a convenient method for detecting, confirming, and understanding important interactions.
+\begin{itemize}
+
+\item Combining $h_{\text{tree}}$ with partial dependence and ICE curves is a convenient method for detecting, confirming, and understanding important interactions in $g$.
+
+\item As monotonicity is often a desired trait for interpretable models, partial dependence and ICE plots can be used to verify the monotonicity of $g$ on average and across deciles of $g(\mathbf{X})$ w.r.t. some input variable $X_j$.
+
+\end{itemize}
+
+
 
 % interactions: Overlaying PD and ICE curves is a succinct method for describing global and local prediction behavior and can be used to detect interactions. 
 
