@@ -70,7 +70,7 @@ Interpretability of statistical and machine learning models is a multifaceted, c
 	
 \begin{figure}[htb]
 	\begin{center}
-		\includegraphics[height=165pt]{img/learning_problem.png}
+		\includegraphics[height=165pt]{img/figure_1.png}
 		\label{fig:learning_problem}
 		\caption{An augmented learning problem diagram in which several techniques create explanations for a credit scoring model. Adapted from \textbf{Learning From Data} \cite{lfd}.}
 	\end{center}
@@ -85,7 +85,7 @@ As in figure \ref{fig:learning_problem}, the presented explanatory methods help 
 	\item Preventing or debugging malicious hacking of models or adversarial attacks on models.
 \end{itemize}
 
-Detailed discussions of the explanatory methods begin below by defining notation. Then sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, section \ref{sec:software} highlights a few software resources that accompany this paper. 
+Detailed discussions of the explanatory methods begin below by defining notation. Then sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:use_case} applies some of the techniques and recommendations to the well-known Kaggle diabetes dataset. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, section \ref{sec:software} highlights a few software resources that accompany this paper. 
 
 %-------------------------------------------------------------------------------
 \section{Notation} \label{sec:notation}
@@ -140,7 +140,7 @@ Decision trees can be represented as directed graphs where the relative position
 
 \begin{figure}
 	\begin{center}
-		\includegraphics[height=200pt]{img/global_shapley.png}
+		\includegraphics[height=200pt]{img/figure_2.png}
 		\caption{Shapley summary plot for known target function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for a machine-learned GBM response function $g_{\text{GBM}}$.}
 		\label{fig:global_shapley}
 	\end{center}
@@ -161,7 +161,7 @@ Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tr
 
 \begin{figure}[htb]
 	\begin{center}
-		\includegraphics[height=140pt]{img/dt_surrogate4.png}
+		\includegraphics[height=160pt, width=235pt]{img/figure_3.png}
 		\caption{$h_{\text{tree}}$ for known target function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for a machine-learned GBM response function $g_{\text{GBM}}$.}
 		\label{fig:dt_surrogate}
 	\end{center}
@@ -192,13 +192,13 @@ Following Friedman et al. (\citeyear{esl}) a single feature $X_j \in \mathbf{X}$
 
 \begin{figure}[htb]
 	\begin{center}
-		\includegraphics[height=125pt]{img/pdp_ice.png}
+		\includegraphics[height=135pt, width=235pt]{img/figure_4.png}
 		\caption{Partial dependence and ICE curves for $ X_j = \text{num}_9$, for known signal generating function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for machine-learned GBM response function $g_{\text{GBM}}$.}
 		\label{fig:pdp_ice}
 	\end{center}
 \end{figure}
 
-As in section \ref{sec:surrogate_dt}, simulated data is used to highlight desirable characteristics of partial dependence and ICE plots. In figure \ref{fig:pdp_ice} partial dependence and ICE at the minimum, maximum, and each decile of $g_{\text{GBM}}(\mathbf{X})$ are plotted. The known quadratic behavior of $\text{num}_9$ is plainly visible, except for high value predictions, the 80\textsuperscript{th} percentiles of $g_{\text{GBM}}(\mathbf{X})$ and above and for $\sim-1 < \text{num}_9 < \sim1$. When partial dependence and ICE curves diverge, this often points to an interaction that is being averaged out of the partial dependence. Given the form of equation \ref{eq:f}, there is a known interaction between $\text{num}_9$ and $\text{num}_8$. Combining the information from partial dependence and ICE plots with $h_{tree}$ can help elucidate more detailed information about modeled interactions in $g$. For the simulated example, $h_{tree}$ shows an interaction between $\text{num}_9$ and $\text{num}_8$ and additional modeled interactions between $\text{num}_9$, $\text{num}_4$, and $\text{num}_1$ for $\sim -0.92 \le \text{num}_9 < \sim 1.04.$ URLs to the data and software used to generate figure \ref{fig:pdp_ice} are available in section \ref{sec:software}.
+As in section \ref{sec:surrogate_dt}, simulated data is used to highlight desirable characteristics of partial dependence and ICE plots. In figure \ref{fig:pdp_ice} partial dependence and ICE at the minimum, maximum, and each decile of $g_{\text{GBM}}(\mathbf{X})$ are plotted. The known quadratic behavior of $\text{num}_9$ is plainly visible, except for high value predictions, the 80\textsuperscript{th} percentiles of $g_{\text{GBM}}(\mathbf{X})$ and above and for $\sim-1 < \text{num}_9 < \sim1$. When partial dependence and ICE curves diverge, this often points to an interaction that is being averaged out of the partial dependence. Given the form of equation \ref{eq:f}, there is a known interaction between $\text{num}_9$ and $\text{num}_8$. Combining the information from partial dependence and ICE plots with $h_{tree}$ can help elucidate more detailed information about modeled interactions in $g$. For the simulated example, $h_{tree}$ shows an interaction between $\text{num}_9$ and $\text{num}_8$ and additional modeled interactions between $\text{num}_9$, $\text{num}_4$, and $\text{num}_1$ for $\sim -0.92 \le \text{num}_9 <  \sim 1.04.$ URLs to the data and software used to generate figure \ref{fig:pdp_ice} are available in section \ref{sec:software}.
 
 \subsection{Recommendations}
 
@@ -309,15 +309,12 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\section{Use Case} \label{sec:use_case}
-%-------------------------------------------------------------------------------
-
-
-%-------------------------------------------------------------------------------
 \section{General Recommendations} \label{sec:gen_rec}
 %-------------------------------------------------------------------------------
 
 \begin{itemize}
+	
+	\item Monotonicity.	
 	
 	\item Monotonically constrained XGBoost, Surrogate DT, PD and ICE plots, and Tree Shap are a direct and open source way to create an interpretable nonlinear model.
 	
@@ -334,6 +331,10 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 	\item To increase adoption, production deployment of explanatory methods must be straightforward.
 	
 \end{itemize}
+
+%-------------------------------------------------------------------------------
+\section{Diabetes Data Use Case} \label{sec:use_case}
+%-------------------------------------------------------------------------------
 
 %-------------------------------------------------------------------------------
 \section{Suggested Reading} \label{sec:suggested}
