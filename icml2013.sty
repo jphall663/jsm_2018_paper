@@ -82,7 +82,7 @@
   \hypersetup{ %
     pdftitle={},
     pdfauthor={},
-    pdfsubject={Proceedings of the International Conference on Machine Learning 2013},
+    pdfsubject={Proceedings of the Joint Statistical Meetings 2013},
     pdfkeywords={},
     pdfborder=0 0 0,
     pdfpagemode=UseNone,
@@ -103,7 +103,8 @@
 % final/accepted version of the ``appearing in'' note.  Modify it to
 % change that text.
 %%%%%%%%%%%%%%%%%%%%
-\newcommand{\ICML@appearing}{\textit{Copyright 2018 by the author(s).}}
+\newcommand{\ICML@appearing}{\textit{Proceedings of the
+Joint Statistical Meetings}, Vancouver, British Columbia, CA, 2018. Copyright 2018 by the author.}
 
 %%%%%%%%%%%%%%%%%%%%
 % This string is printed at the bottom of the page for the draft/under
@@ -205,41 +206,41 @@ International Conference on Machine Learning (ICML).  Do not distribute.}
 %%% displacement to offset the space allocated for a non-existent
 %%% caption).
 %%%
-%\def\ftype@copyrightbox{8}
-%\def\@copyrightspace{
+\def\ftype@copyrightbox{8}
+\def\@copyrightspace{
 % Create a float object positioned at the bottom of the column.  Note
 % that because of the mystical nature of floats, this has to be called
 % before the first column is populated with text (e.g., from the title
 % or abstract blocks).  Otherwise, the text will force the float to
 % the next column.  -- TDRL.
-%\@float{copyrightbox}[b]
-%\begin{center}
-%\setlength{\unitlength}{1pc}
-%\begin{picture}(20,1.5)
+\@float{copyrightbox}[b]
+\begin{center}
+\setlength{\unitlength}{1pc}
+\begin{picture}(20,1.5)
 % Create a line separating the main text from the note block.
 % 4.818pc==0.8in.
-%\put(0,2.5){\line(1,0){4.818}}
+\put(0,1.7){\line(1,0){4.818}}
 % Insert the text string itself.  Note that the string has to be
 % enclosed in a parbox -- the \put call needs a box object to
 % position.  Without the parbox, the text gets splattered across the
 % bottom of the page semi-randomly.  The 19.75pc distance seems to be
 % the width of the column, though I can't find an appropriate distance
 % variable to substitute here.  -- TDRL.
-%\put(0,0){\parbox[b]{10.75pc}{\small }}
-%\end{picture}
-%\end{center}
-%\end@float}
+\put(0,0){\parbox[b]{19.75pc}{\small \Notice@String}}
+\end{picture}
+\end{center}
+\end@float}
 
 % Note: A few Latex versions need the next line instead of the former.
 % \addtolength{\topmargin}{0.3in}
 % \setlength\footheight{0pt}
-%\setlength\footskip{0pt} 
+\setlength\footskip{0pt} 
 %\pagestyle{empty} 
-%\flushbottom \twocolumn
-%\sloppy
+\flushbottom \twocolumn
+\sloppy
 
 % Clear out the addcontentsline command
-%\def\addcontentsline#1#2#3{}
+\def\addcontentsline#1#2#3{}
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% commands for formatting paper title, author names, and addresses. 
@@ -381,7 +382,7 @@ International Conference on Machine Learning (ICML).  Do not distribute.}
 \renewenvironment{abstract}
    {%
 % Insert the ``appearing in'' copyright notice.
-%\@copyrightspace
+\@copyrightspace
 \centerline{\large\bf Abstract}
     \vspace{-0.12in}\begin{quote}}
    {\par\end{quote}\vskip 0.12in}

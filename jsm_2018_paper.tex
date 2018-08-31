@@ -7,6 +7,7 @@
 % For figures
 \usepackage{graphicx} % more modern
 \usepackage{subfigure} 
+%\usepackage[section]{placeins}
 
 % For citations
 \usepackage{natbib}
@@ -24,6 +25,7 @@
 \def\UrlBreaks{\do\/\do-}
 \usepackage{breakurl}
 \usepackage[breaklinks]{hyperref}
+%\usepackage[breaklinks, draft]{hyperref}
 
 % Fixes weird hyperref and algorithmic behavior
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
@@ -32,13 +34,13 @@
 \usepackage[accepted]{icml2013}
 
 % Short title
-\icmltitlerunning{A Discussion of Model Explanation Tools}
+\icmltitlerunning{A Discussion of Machine Learning Explanation Tools}
 
 \begin{document} 
 
 \twocolumn[
-\icmltitle{A Discussion of Model Explanation Tools\\
-           with Practical Recommendations}
+\icmltitle{A Discussion of Machine Learning Explanation Tools\\
+           with Practical Recommendations and a Use Case}
 
 % Authors
 \icmlauthor{Patrick Hall}{phall@h2o.ai}
@@ -51,14 +53,14 @@
 % the "keywords" metadata in the PDF but will not be shown in the document
 \icmlkeywords{machine learning, interpretability, explanations, fairness, accountability, transparency, FATML, XAI}
 
-\vskip 0.3in
+\vskip 0.2in
 ]
 
 %----------------------------------------------------------------------
 \begin{abstract} 
 %----------------------------------------------------------------------
 	
-This paper discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain. Along with descriptions of these methods, practical guidance for usage and in-depth software examples are also presented.
+This paper discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain. Along with descriptions of these methods, practical recommendations, a use case, and in-depth software examples are also presented.
 
 \end{abstract} 
 
@@ -66,7 +68,9 @@ This paper discusses several explanatory methods that go beyond the error measur
 \section{Introduction}
 %----------------------------------------------------------------------
 
-Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This paper focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. Others have defined key terms and put forward general motivations for better intepretability of machine learning models \cite{lipton1}, \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}. Following Doshi-Velez and Kim \yrcite{been_kim1}, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
+Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This paper focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. 
+
+Others have defined key terms and put forward general motivations for better intepretability of machine learning models \cite{lipton1}, \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}. Following Doshi-Velez and Kim \yrcite{been_kim1}, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
 	
 \begin{figure}[htb]
 	\begin{center}
@@ -128,7 +132,7 @@ The phrase \textit{surrogate model} is used here to refer to a simple model, $h$
 
 \subsection{Description}
 
-Given a learned function $g$ and set of learned output responses $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and a tree splitting and pruning approach $\mathcal{A}$, a surrogate decision tree, $h_{\text{tree}}$, can be extracted: 
+Given a learned function $g$ and set of learned output responses $g(\mathbf{X}) = \mathbf{\hat{Y}}$, and a tree splitting and pruning approach $\mathcal{A}$, a global -- or over all $\mathbf{X}$ -- surrogate decision tree, $h_{\text{tree}}$, can be extracted: 
 
 \begin{equation}
 \mathbf{X}, g(\mathbf{X}) \xrightarrow{\mathcal{A}} h_{\text{tree}}
@@ -136,7 +140,7 @@ Given a learned function $g$ and set of learned output responses $g(\mathbf{X}) 
 
 such that $h_{\text{tree}}(\mathbf{X}) \approx g(\mathbf{X})$. 
 
-Decision trees can be represented as directed graphs where the relative positions of input variables can provide insight into their importance and interactions \\ \cite{cart}. This makes decision trees useful surrogate models. Input variables that appear high and often in the directed graph representation of $h_{\text{tree}}$ are assumed to have high importance in $g$. Input variables directly above or below one-another in $h_{\text{tree}}$ are assumed to have have strong interactions in $g$. These relative relationships between input variables in $h_{\text{tree}}$ can be used to verify and debug the variable importance, interactions, and predictions of $g$.
+Decision trees can be represented as directed graphs where the relative positions of input features can provide insight into their importance and interactions \\ \cite{cart}. This makes decision trees useful surrogate models. Input features that appear high and often in the directed graph representation of $h_{\text{tree}}$ are assumed to have high importance in $g$. Input features directly above or below one-another in $h_{\text{tree}}$ are assumed to have have strong interactions in $g$. These relative relationships between input features in $h_{\text{tree}}$ can be used to verify and debug the feature importance, interactions, and predictions of $g$.
 
 \begin{figure}
 	\begin{center}
@@ -146,23 +150,23 @@ Decision trees can be represented as directed graphs where the relative position
 	\end{center}
 \end{figure}
 
-Figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} use simulated data to emperically demonstrate the desired relationships between input variable importance and interactions in the input space $\mathbf{X}$, the label space $f(\mathbf{X}) = \mathbf{Y}$, a GBM model to be explained $g_{\text{GBM}}$, and a decision tree surrogate $h_{\text{tree}}$. Data with a known target function depending on four input variables with interactions: 
+Figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} use simulated data to emperically demonstrate the desired relationships between input feature importance and interactions in the input space $\mathbf{X}$, the label space $f(\mathbf{X}) = \mathbf{Y}$, a GBM model to be explained $g_{\text{GBM}}$, and a decision tree surrogate $h_{\text{tree}}$. Data with a known target function depending on four input features with interactions: 
 
 \begin{equation}
 \label{eq:f}
 f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e
 \end{equation}
 
-and with eight noise variables is simulated. $g_{\text{GBM}}$ is trained: $ \mathbf{X}, \mathbf{f(X)} \xrightarrow{\mathcal{A}} g_{\text{GBM}}$ such that $g_{\text{GBM}} \approx f$. Then $h_{\text{tree}}$ is extracted by $\mathbf{X}, \mathbf{g_{\text{GBM}}(X)} \xrightarrow{\mathcal{A}} h_{\text{tree}}$, such that $h_{\text{tree}}(\mathbf{X}) \approx g_{\text{GBM}}(\mathbf{X}) \approx f(\mathbf{X})$.
+and with eight noise features is simulated. $g_{\text{GBM}}$ is trained: $ \mathbf{X}, \mathbf{f(X)} \xrightarrow{\mathcal{A}} g_{\text{GBM}}$ such that $g_{\text{GBM}} \approx f$. Then $h_{\text{tree}}$ is extracted by $\mathbf{X}, \mathbf{g_{\text{GBM}}(X)} \xrightarrow{\mathcal{A}} h_{\text{tree}}$, such that $h_{\text{tree}}(\mathbf{X}) \approx g_{\text{GBM}}(\mathbf{X}) \approx f(\mathbf{X})$.
 
-Figure \ref{fig:global_shapley} displays the local Shapley importance values for an input variable's impact on each $g_{\text{GBM}}(\mathbf{X})$ prediction. Plotting Shapley values can be a more wholistic and consistent variable importance metric than traditional single-value quantities \cite{shapley}. As expected, figure \ref{fig:global_shapley} shows that $\text{num}_9$ and $\text{num}_8$ tend to make the largest contributions to $g_{\text{GBM}}(\mathbf{X})$ followed by $\text{num}_4$ and $\text{num}_1$. Also as expected, noise variables make minimal contributions to $g_{\text{GBM}}(\mathbf{X})$. Shapley values are discussed in detail in section \ref{sec:shap}.
+Figure \ref{fig:global_shapley} displays the local Shapley importance values for an input feature's impact on each $g_{\text{GBM}}(\mathbf{X})$ prediction. Plotting Shapley values can be a more wholistic and consistent feature importance metric than traditional single-value quantities \cite{shapley}. As expected, figure \ref{fig:global_shapley} shows that $\text{num}_9$ and $\text{num}_8$ tend to make the largest contributions to $g_{\text{GBM}}(\mathbf{X})$ followed by $\text{num}_4$ and $\text{num}_1$. Also as expected, noise features make minimal contributions to $g_{\text{GBM}}(\mathbf{X})$. Shapley values are discussed in detail in section \ref{sec:shap}.
 
-Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tree}}$ that prominently displays the importance of input variables $\text{num}_9$ and $\text{num}_8$ along $\text{num}_4$ and $\text{num}_1$. Figure \ref{fig:dt_surrogate} also visually highlights the interactions between these inputs. URLs to the data and software used to generate figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} are available in section \ref{sec:software}.
+Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tree}}$ that prominently displays the importance of input features $\text{num}_9$ and $\text{num}_8$ along $\text{num}_4$ and $\text{num}_1$. Figure \ref{fig:dt_surrogate} also visually highlights the interactions between these inputs. URLs to the data and software used to generate figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} are available in section \ref{sec:software}.
 
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[height=160pt, width=235pt]{img/figure_3.png}
-		\caption{$h_{\text{tree}}$ for known target function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for a machine-learned GBM response function $g_{\text{GBM}}$.}
+		\caption{$h_{\text{tree}}$ for previously defined known target function $f$ and machine-learned GBM response function $g_{\text{GBM}}$.}
 		\label{fig:dt_surrogate}
 	\end{center}
 \end{figure}
@@ -184,7 +188,7 @@ Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tr
 \label{sec:pd_ice}
 %-------------------------------------------------------------------------------
 
-Partial dependence (PD) plots are a well-known method for describing the average predictions of a complex model, $g$, across some partition of data, $\mathbf{X}$, for some interesting input variable, $X_j$ \cite{esl}. Individual conditional expectation (ICE) plots are a newer method that describes the local behavior of $g$ for a single instance of $\mathbf{X}$, $\mathbf{x}^{(i)}$ \cite{ice_plots}. Partial dependence and ICE can be combined in the same plot to identify strong interactions modeled by $g$ and to create a wholistic portrait of the predictions of a complex model for some interesting input variable, $X_j$.
+Partial dependence (PD) plots are a well-known method for describing the average predictions of a complex model, $g$, across some partition of data, $\mathbf{X}$, for some interesting input feature, $X_j$ \cite{esl}. Individual conditional expectation (ICE) plots are a newer method that describes the local behavior of $g$ for a single instance of $\mathbf{X}$, $\mathbf{x}^{(i)}$ \cite{ice_plots}. Partial dependence and ICE can be combined in the same plot to identify strong interactions modeled by $g$ and to create a wholistic portrait of the predictions of a complex model for some interesting input feature, $X_j$.
 
 \subsection{Description}
 	
@@ -193,7 +197,7 @@ Following Friedman et al. (\citeyear{esl}) a single feature $X_j \in \mathbf{X}$
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[height=135pt, width=235pt]{img/figure_4.png}
-		\caption{Partial dependence and ICE curves for $ X_j = \text{num}_9$, for known signal generating function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$, and for machine-learned GBM response function $g_{\text{GBM}}$.}
+		\caption{Partial dependence and ICE curves for previously defined known target function $f$ and machine-learned GBM response function $g_{\text{GBM}}$.}
 		\label{fig:pdp_ice}
 	\end{center}
 \end{figure}
@@ -206,21 +210,20 @@ As in section \ref{sec:surrogate_dt}, simulated data is used to highlight desira
 
 \item Combining $h_{\text{tree}}$ with partial dependence and ICE curves is a convenient method for detecting, confirming, and understanding important interactions in $g$.
 
-\item As monotonicity is often a desired trait for interpretable models, partial dependence and ICE plots can be used to verify the monotonicity of $g$ on average and across deciles of $g(\mathbf{X})$ w.r.t. some input variable $X_j$.
+\item As monotonicity is often a desired trait for interpretable models, partial dependence and ICE plots can be used to verify the monotonicity of $g$ on average and across deciles of $g(\mathbf{X})$ w.r.t. some input feature $X_j$.
 
 \end{itemize}
 
-
-
-% interactions: Overlaying PD and ICE curves is a succinct method for describing global and local prediction behavior and can be used to detect interactions. 
-
-% confirm monotonicity
 %-------------------------------------------------------------------------------
 \section{Local Interpretable Model-agnostic Explanations (LIME)}
 \label{sec:lime}
 %-------------------------------------------------------------------------------
 
-\cite{lime} defines LIME for some observation $\mathbf{x} \in \mathcal{X}$:
+Global and local scope is a key concept in explaining machine learning models and predictions. Section \ref{sec:surrogate_dt} presents decision trees as a global -- or over all $\mathbf{X}$ -- surrogate model. As machine-learned response functions, $g$, can be complex, simple global surrogate models can sometimes be too approximate to be practically useful. LIME attempts to create more representative explanations by fitting a local surrogate model, $h$, in the local region of some data point of interest, $\mathbf{x} \in \mathcal{X}$. Both $h$ and local regions can be defined to suite the needs of users.
+
+\subsection{Description}
+
+Ribeiro et al. (\citeyear{lime}) defines LIME for some observation $\mathbf{x} \in \mathcal{X}$ as:
 
 \begin{equation}
 \begin{aligned}
@@ -228,47 +231,73 @@ As in section \ref{sec:surrogate_dt}, simulated data is used to highlight desira
 \end{aligned}
 \end{equation}
 
-Here $g$ is the function to be explained, $h$ is an interpretable surrogate model of $g$, often a linear model $h_{GLM}$, $\pi_{\mathbf{X}}$ is a weighting function over the domain of $g$, and $\Omega(h)$ limits the complexity of $h$.
+where $h$ is an interpretable surrogate model of $g$, often a linear model $h_{GLM}$, $\pi_{\mathbf{X}}$ is a weighting function over the domain of $g$, and $\Omega(h)$ limits the complexity of $h$.
 
 \vspace{5pt}
 
-Typically, $h_{GLM}$ is constructed such that
+Following Ribeiro et al. (\citeyear{lime}) $h_{GLM}$ is often trained by:
 
 \begin{equation}
 \begin{aligned}
-\mathbf{X}^{(*)}, g({X}^{(*)}) \xrightarrow{\mathcal{A}_{\text{surrogate}}} h_{\text{GLM}}
+\mathbf{X}', g(\mathbf{X}') \xrightarrow{\mathcal{A}_{\text{LASSO}}} h_{\text{GLM}}
 \end{aligned}
 \end{equation}
 
-where $\mathbf{X}^{(*)}$ is a generated sample, $\pi_{\mathbf{X}}$ weighs $\mathbf{X}^{(*)}$ samples by their Euclidean similarity to $\mathbf{x}$, local feature importance is estimated using $\beta_j x_j$, and $L_1$ regularization is used to induce a simplified, sparse $h_{GLM}$. 		
+where $\mathbf{X}'$ is sampled from $\mathcal{X}$, $\pi_{\mathbf{X}}$ weighs $\mathbf{X}'$ samples by their Euclidean similarity to $\mathbf{x}$ to enforce locality, local feature contributions are estimated with the product of $h_{\text{GLM}}$ coefficients and local row values $\beta_j x^{(i)}_j$, and $\Omega(h)$ is defined as a LASSO, or L1, penalty on $h_{\text{GLM}}$ inducing sparsity in $h_{GLM}$. 		
+
+Figure \ref{fig:lime} displays local feature contribution values for the same $g_{\text{GBM}}$ and simulated $\mathbf{X}$ with known target function $f$ used in previous sections. To increase the nonlinear capacity of the three $h_{GLM}$ models, information from the Shapley summary plot in figure \ref{fig:global_shapley} is used to select inputs to discretize, $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$, before training each $h_{GLM}$. Table \ref{tab:lime} contains prediction and fit information for $g_{\text{GBM}}$ and $h_{\text{GLM}}$, critical information for analyzing LIMEs.
+
+\vspace{-10pt}
+\begin{table}[ht]
+	\caption{$g_{\text{GBM}}(\mathbf{x})$ predictions, intercepts, and $h_{GLM}$ R\textsuperscript{2} for $h_{GLM}$ models trained to explain $g_{\text{GBM}}(\mathbf{x})$ at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} percentiles of previously defined $g_{\text{GBM}}(\mathbf{X})$ and known signal generating function $f$.} 
+	%\tiny
+	\begin{tabular}{ | p{1.4cm} | p{1.4cm} | p{1.4cm} | p{1.4cm}| p{0.8cm} | }
+	\hline
+	$g_{\text{GBM}}(\mathbf{X})$ Pctl. & $g_{\text{GBM}}(\mathbf{x})$ Pred. & $h_{GLM}(\mathbf{x})$ Pred. & $h_{GLM}$ Intercept & $h_{GLM}$ R\textsuperscript{2} \\ 
+	\hline
+	10\textsuperscript{th} & 0.16 & 0.13 & 0.53 & 0.72\\
+	\hline	
+	Median & 0.30 & 0.47 & 0.70 & 0.57\\
+	\hline	
+	90\textsuperscript{th} & 0.82 & 0.86 & 0.76 & 0.40\\
+	\hline
+	\end{tabular}
+	\label{tab:lime}
+\end{table}	
+
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[height=155pt]{img/figure_5.png}
+		\caption{Sparse, low-fidelity local feature contributions found using LIME at three percentiles of $g_{\text{GBM}}(\mathbf{X})$ and for known signal generating function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$.}
+		\label{fig:lime}
+	\end{center}
+\end{figure*}
+
+In table \ref{tab:lime} it can be seen that LIME is not gauranteed to be locally accurate, meaning that the predictions of $h_{GLM}(\mathbf{x})$ are not always equal to the prediction of $g_{\text{GBM}}(\mathbf{x})$. Moreover, the three $h_{GLM}$ models are not necessarily explaining all the variance of the $g_{\text{GBM}}$ predictions in the local regions around the three $\mathbf{x}^{(i)}$ of interest. $h_{GLM}$ intercepts are also important to investigate, because local feature contribution values, $\beta_j x_j^{(i)}$, are offsets from the local $h_{GLM}$ intercepts.
+
+An immediately noticable characteristic of the local explanations displayed in figure \ref{fig:lime} is their sparsity. The LASSO training procedure drives some $h_{GLM}$ $\beta_j$ coefficients to zero, ensuring that some $\beta_j x_j^{(i)}$ local feature contributions are also always zero. For the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{x})$ prediction, the local $h_{GLM}$ R\textsuperscript{2} is adequate and the LIME values appear parsimonious with reasonable expectations. The contributions from discretized $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ outweigh all other noise feature contributions and the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are all negative as expected for the low value of $g_{\text{GBM}}(\mathbf{x})$. 
+
+For the median prediction of $g_{\text{GBM}}(\mathbf{x})$ it could be expected that some contributions from $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ would be positive but others would be negative. However, all local feature contributions are negative. Thic an be explained by the relatively high value of the $h_{\text{GLM}}$ intercept for this decile. Because the $h_{\text{GLM}}$ intercept is quite large compared to the $g_{\text{GBM}}(\mathbf{x})$, it is not alarming that all the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ negative offsets with respect to the local intercept value. For the median $g_{\text{GBM}}(\mathbf{x})$ prediction the noise feature $\text{num}_2$ has a fairly large contribution and the local $h_{GLM}$ R\textsuperscript{2} could be considered to be less than adequate.
+
+For the 90\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{x})$ prediction the local contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive as expected for the high value of $g_{\text{GBM}}(\mathbf{x})$, but the local $h_{GLM}$ R\textsuperscript{2} is somewhat poor and the noise feature $num2$ has the highest local feature contribtion. This large attribution to the noise feature $\text{num}2$ could stem from problems in the LIME procedure or in the fit of $g_{\text{GBM}}$ to $f$. Further investigation, or model debugging, is conducted in section \ref{sec:shap}. Generally the LIMEs in section \ref{sec:lime} would be considered to be sparse or high-interpretability but also low-fidelity explanations. This is not always the case with LIME, but the fit of some $h_{GLM}$ to a local region around some $g(\mathbf{x})$ will vary in accuracy. URLs to the data and software used to generate table \ref{tab:lime} and \ref{fig:lime} are available in section \ref{sec:software}.
+
+\subsection{Recommendations}
 
 \begin{itemize}
 	
-	\item LIME is ideal for creating low-fidelity, highly interpretable explanations for non-DT models and for neural network models trained on unstructured data, e.g. deep learning.
-	
-	\item Always use regression fit measures to assess the trustworthiness of LIME explanations.
-	
-	\item LIME can be difficult to deploy, but there are highly deployable variants. \cite{lime-sup}; \cite{h2o_mli_booklet}
-	
-	\item Local feature importance values are offsets from a local intercept.
-	
-	\begin{itemize}
-		
-		\item Note that the intercept in LIME can account for the most important local phenomena.
-		
-		\item Generated LIME samples can contain large proportions of out-of-range data that can lead to unrealistic intercept values. 
-		
-	\end{itemize}
-	
-\end{itemize}
+	\item Always use fit measures to assess the trustworthiness of LIMEs.
 
-\begin{itemize}
+	\item Local feature contribution values are often offsets from a local $h_{GLM}$ intercept. Note that this intercept can sometimes account for the most important local phenomena.
+
+	\item Some LIME methods can be difficult to deploy for explaining predictions in real-time. Consider highly deployable variants, i.e. Hu et al \citeyear {lime-sup} and Hall et al. \citeyear{h2o_mli_booklet}, for real-time applications.
+		
+	\item Always investigate local $h_{GLM}$ intercept values. Generated LIME samples can contain large proportions of out-of-range data that can lead to unrealistic intercept values. 
+		
+	\item To increase the fidelity of LIMEs, try LIME on discretized input features and on manually constructed interactions.
 	
-	\item To increase the fidelity of LIME explanations, try LIME on discretized input features and on manually constructed interactions.
+	\item Use cross-validation to construct standard deviations or even confidence intervals for local feature contribution values.
 	
-	\item Use cross-validation to construct standard deviations or even confidence intervals for local feature importance values.
-	
-	\item LIME can fail, particularly in the presence of extreme nonlinearity or high-degree interactions.
+	\item When relying only on local linear models, note LIME can fail to create acceptable explanations, particularly in the presence of extreme nonlinearity or high-degree interactions. Other types of local models with model-specific explanatory mechanisms, such as decision trees or neural networks, can be used in these cases. 
 	
 \end{itemize}
 
@@ -276,7 +305,15 @@ where $\mathbf{X}^{(*)}$ is a generated sample, $\pi_{\mathbf{X}}$ weighs $\math
 \section{Tree Shap} \label{sec:shap}
 %-------------------------------------------------------------------------------
 
-Shapley explanations are a class of additive, consistent local feature importance measures with long-standing theoretical support, \cite{shapley}. For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[height=135pt]{img/figure_6.png}
+		\caption{Complete, high-fidelity local feature contributions found using tree shap at three percentiles of $g_{\text{GBM}}(\mathbf{X})$ and for known signal generating function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$.}
+		\label{fig:pdp_ice}
+	\end{center}
+\end{figure*}
+
+Shapley explanations are a class of additive, consistent local feature contribution measures with long-standing theoretical support, \cite{shapley}. For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
 
 \vspace{-5pt}
 
@@ -286,7 +323,7 @@ Shapley explanations are a class of additive, consistent local feature importanc
 \end{aligned}
 \end{equation}
 
-Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature importance value associated with $x_j$.
+Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$.
 
 \begin{itemize}
 	
@@ -300,7 +337,7 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 	
 	\item Tree Shap is ideal for high-fidelity explanations of DT-based models, perhaps even in regulated applications.
 	
-	\item Local feature importance values are offsets from a global intercept.
+	\item Local feature contribution values are offsets from a global intercept.
 	
 	\item LIME can be constrained to become Shapley explanations, i.e. kernel shap.
 	
@@ -381,7 +418,7 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 \bibliographystyle{icml2013}
 \bibliography{jsm_2018_paper}
 
-\end{document} 
+0\end{document} 
 
 
 
