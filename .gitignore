@@ -1,4 +1,4 @@
-img/Thumbs.db
+Thumbs.db
 *.aux
 *.bbl
 *.blg
@@ -10,3 +10,5 @@ img/Thumbs.db
 *.synctex.gz
 *.toc
 *-blx.bib
+*.dvi
+scratch
