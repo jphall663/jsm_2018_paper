@@ -285,6 +285,46 @@ Generally the LIMEs in section \ref{sec:lime} would be considered to be sparse o
 \section{Tree Shap} \label{sec:shap}
 %-------------------------------------------------------------------------------
 
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/figure_6.eps}
+		\caption{Complete, high-fidelity local feature contributions found using tree shap at three percentiles of $g_{\text{GBM}}(\mathbf{X})$ and for known signal generating function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$.}
+		\label{fig:pdp_ice}
+	\end{center}
+\end{figure*}
+
+Shapley explanations are a class of additive, consistent local feature contribution measures with long-standing theoretical support, \cite{shapley}. For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
+
+\vspace{-5pt}
+
+\begin{equation}
+\begin{aligned}
+\phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{x}_j^\prime
+\end{aligned}
+\end{equation}
+
+Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$.
+
+\begin{itemize}
+	
+	\item Calculating Shapley values directly is typically infeasible, but they can be estimated in different ways.
+	
+	\item Tree Shap is a specific implementation of Shapley explanations that leverages DT structures to disaggregrate the contribution of each $x_j$ to $g(\mathbf{x})$ in a DT or DT-based ensemble model. \cite{tree_shap}
+	
+\end{itemize}
+
+\begin{itemize}
+	
+	\item Tree Shap is ideal for high-fidelity explanations of DT-based models, perhaps even in regulated applications. REASON CODES.
+	
+	\item Local feature contribution values are offsets from a global intercept.
+	
+	\item LIME can be constrained to become Shapley explanations, i.e. kernel shap.
+	
+	\item A similar, popular method known as \textit{treeinterpreter} appears untrustworthy when applied to GBM models. 
+	
+\end{itemize}
+
 %-------------------------------------------------------------------------------
 \section{General Recommendations} \label{sec:gen_rec}
 %-------------------------------------------------------------------------------
@@ -303,6 +343,8 @@ The following recommendations apply to several or all of the described explanato
 	
 	\item Surrogate models can provide low-fidelity explanations for an entire machine learning pipeline in the original feature space if $g$ is defined to include feature extraction or feature engineering.
 	
+	\item Both understanding and trust are crucial to interpetability. The discussed explanatory techniques should engender a greater understanding of model mechanisms and predictions. But can a model be trusted to perform as expected on unseen data? Its predictions probably do not extrapolate linearly outside of the training, validation, or test data domain. Always conduct sensitivity analysis on your trained machine learning model to understand how it will behave on out-of-domain data.
+	
 	\item Consider production deployment of explanatory methods carefully. Currently, the deployment of some open source software packages is not straightforward, especially for the generation of explanations on new data in real-time.
 	
 \end{itemize}
@@ -311,9 +353,15 @@ The following recommendations apply to several or all of the described explanato
 \section{Credit Card Data Use Case} \label{sec:use_case}
 %-------------------------------------------------------------------------------
 
+Some of the discussed explanatory techniques and recommendations will now be applied to a basic credit scoring problem using XGBoost and the UCI credit card dataset. This monotonically constrained XGBoost model will be globally explainable through the use of aggregrated local Shapley values, decision tree surrogate models, partial dependence, and ICE plots. Additionally each prediction made by the model will be explainable using local Shapley feature importance values. 
+
+% refer back to figure 1
+
 %-------------------------------------------------------------------------------
 \section{Suggested Reading} \label{sec:suggested}
 %-------------------------------------------------------------------------------
+
+As stated in the introduction, this paper focuses on a fairly narrow but practical sub-discipline of machine learning interpretability. As interpretability truly is a diverse subject with many other practically useful areas of study, three additional subjects are suggested for further reading.
 
 \subsection{White-box Models}
 
@@ -325,13 +373,31 @@ Often considered the darkest of black-box models, recent work in xNN implementat
 
 \subsection{Fairness}
 
+Fairness is yet another important facet of interpretability, and an admirable goal for any machine learning project whose outcomes will affect human lives. Basic checks for fairness include assessing the average prediction, accuracy, and error across demographic segments of interest. Today, the study of fairness in machine learning is progressing rapidly. Users who would like to stay abreast of developments in the fairness space should follow the free online book on the subject by leading researchers, \textit{Fairness and Machine Learning} \cite{fairness_book}. The the book's website includes references to many other fairness materials. Users may also be interested in the broader organization for fairness, accountability, and transparency in machine learning or FATML. FATML keeps an updated list of pertinent scholarship on their website: \url{https://www.fatml.org/}. 
+
 %-------------------------------------------------------------------------------
-\section{Software Resources and Supplementary Materials} \label{sec:software}
+\section{Supplementary Materials and Software Resources } \label{sec:software}
 %-------------------------------------------------------------------------------
+
+To make the discussed results useful and reproducible for practitioners, several online supporting materials and software resources are freely available. 
+
+\begin{itemize}
+
+	\item Supplementary materials such as full-sized figures and any corrections or updates to this text are available  at: \url{https://github.com/jphall663/jsm_2018_paper}.
+
+	\item Simulated data experiments, including experiments on random data, and the UCI credit card dataset use case are available at: \url{https://github.com/h2oai/mli-resources/tree/master/lime_shap_treeint_compare}. General instructions for using these resources, including a Dockerfile which builds the complete environment with all dependencies, are available here: \url{https://github.com/h2oai/mli-resources}.
+
+	\item In-depth example explanatory use cases for the UCI credit card dataset are available at: \url{https://github.com/jphall663/interpretable_machine_learning_with_python}.
+
+	\item A running list of interpretability software resources is available at: \url{https://github.com/jphall663/awesome-machine-learning-interpretability}.
+
+\end{itemize}
 
 %-------------------------------------------------------------------------------
 \section{Acknowledgements} 
 %-------------------------------------------------------------------------------
+
+The author wishes to thank Sri Ambati, Arno Candel, Mark Chan,  Doug Deloy, Lauren DiPerna, Mateusz Dymczyk, Navdeep Gill, Megan and Michal Kurka, Lingyao Meng, Mattias M\"uller, Wen Phan and other makers, past and present, at H2O.ai who turned explainability into enterprise-grade software and learned the lessons discussed in this text along with me. The author thanks Leland Wilkinson at H2O.ai and the University of Illinois at Chicago (UIC) for his continued mentorship and guidance. The author thanks Lisa Song for her patient and insightful editing and review. 
 
 %-------------------------------------------------------------------------------
 %\section{References}
