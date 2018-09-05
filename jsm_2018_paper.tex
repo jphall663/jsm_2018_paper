@@ -305,6 +305,10 @@ Shapley explanations are a class of additive, consistent local feature contribut
 
 Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$.
 
+% Local feature contribution values are offsets from a global intercept.
+% LIME can be constrained to become Shapley explanations, i.e. kernel shap.
+
+
 \begin{itemize}
 	
 	\item Calculating Shapley values directly is typically infeasible, but they can be estimated in different ways.
@@ -316,10 +320,6 @@ Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $
 \begin{itemize}
 	
 	\item Tree Shap is ideal for high-fidelity explanations of DT-based models, perhaps even in regulated applications. REASON CODES.
-	
-	\item Local feature contribution values are offsets from a global intercept.
-	
-	\item LIME can be constrained to become Shapley explanations, i.e. kernel shap.
 	
 	\item A similar, popular method known as \textit{treeinterpreter} appears untrustworthy when applied to GBM models. 
 	
@@ -356,6 +356,38 @@ The following recommendations apply to several or all of the described explanato
 Some of the discussed explanatory techniques and recommendations will now be applied to a basic credit scoring problem using XGBoost and the UCI credit card dataset. This monotonically constrained XGBoost model will be globally explainable through the use of aggregrated local Shapley values, decision tree surrogate models, partial dependence, and ICE plots. Additionally each prediction made by the model will be explainable using local Shapley feature importance values. 
 
 % refer back to figure 1
+
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[scale=0.4]{img/figure_7.eps}
+		\caption{}
+		\label{fig:pdp_ice}
+	\end{center}
+\end{figure*}
+
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[scale=0.3]{img/figure_8.eps}
+		\caption{}
+		\label{fig:pdp_ice}
+	\end{center}
+\end{figure*}
+
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/figure_9.eps}
+		\caption{}
+		\label{fig:pdp_ice}
+	\end{center}
+\end{figure*}
+
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[scale=0.6]{img/figure_10.eps}
+		\caption{}
+		\label{fig:pdp_ice}
+	\end{center}
+\end{figure*}
 
 %-------------------------------------------------------------------------------
 \section{Suggested Reading} \label{sec:suggested}
