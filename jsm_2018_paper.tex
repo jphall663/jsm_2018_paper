@@ -3,12 +3,8 @@
 
 \usepackage{graphicx}
 
-%\usepackage{mathtime}
-
-%%UNCOMMENT following line if you have package
 \usepackage{times}
 \usepackage{subfigure} 
-%\usepackage[section]{placeins}
 
 % For citations
 \usepackage{natbib}
@@ -22,19 +18,14 @@
 \usepackage{amsmath}
 
 % For links
-\usepackage[breaklinks]{hyperref}
-\usepackage{url}
-\def\UrlBreaks{\do\/\do-}
-\usepackage{breakurl}
-%\usepackage[breaklinks, draft]{hyperref}
+\usepackage{hyperref}
+\usepackage[anythingbreaks]{breakurl}
 
 % Fixes weird hyperref and algorithmic behavior
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 
 \title{A Discussion of Machine Learning Explanation Tools\\ with Practical Recommendations and a Use Case}
-
-\author{Patrick Hall\thanks{\href{https://www.h2o.ai}{H2O.ai}, Mountain View, CA}
-%\and  Second Author\thanks{Second author's affiliation, 1100 E. 5th Street, Niles, MI 20724} \and  Third Author\thanks{Third author's affiliation,  1100 E. 5th Street, Niles, MI 20724} \and Fourth Author\thanks{Fourth author's affiliation,  1100 E. 5th Street, Niles, MI 20724} \and Fifth Author\thanks{Fifth author's affiliation,  1100 E. 5th Street, Niles, MI 20724}
+\author{Patrick Hall\thanks{H2O.ai, Mountain View, CA}
 }
 \begin{document}
 
@@ -42,16 +33,16 @@
 
 \begin{abstract}
 
-This paper discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain. Along with descriptions of these methods, practical recommendations, a use case, and in-depth software examples are also presented.
+This text discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain. Along with descriptions of these methods, practical recommendations, a use case, and in-depth software examples are also presented.
 
 \begin{keywords}
-Machine learning, interpretability, explanations, transparency, \href{https://www.fatml.org/}{FATML}, \href{https://www.darpa.mil/program/explainable-artificial-intelligence}{XAI}.
+Machine learning, interpretability, explanations, transparency, FATML, XAI.
 \end{keywords}
 \end{abstract}
 
 \section{Introduction}
 
-Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This paper focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. 
+Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This text focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. 
 
 Others have defined key terms and put forward general motivations for better intepretability of machine learning models \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. Following Doshi-Velez and Kim, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
 	
@@ -72,7 +63,7 @@ As in Figure \ref{fig:learning_problem}, the presented explanatory methods help 
 	\item Preventing or debugging malicious hacking of models or adversarial attacks on models.
 \end{itemize}
 
-Detailed discussions of the explanatory methods begin below by defining notation. Then Sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:use_case} applies some of the techniques and recommendations to the well-known UCI credit card dataset \cite{uci}. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, Section \ref{sec:software} highlights a few software resources that accompany this paper. 
+Detailed discussions of the explanatory methods begin below by defining notation. Then Sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:use_case} applies some of the techniques and recommendations to the well-known UCI credit card dataset \cite{uci}. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, Section \ref{sec:software} highlights a few software resources that accompany this text. 
 
 %-------------------------------------------------------------------------------
 \section{Notation} \label{sec:notation}
@@ -141,7 +132,7 @@ f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e
 
 \noindent$g_{\text{GBM}}$ is trained: $ \mathbf{X}, \mathbf{f(X)} \xrightarrow{\mathcal{A}} g_{\text{GBM}}$ such that $g_{\text{GBM}} \approx f$. Then $h_{\text{tree}}$ is extracted by $\mathbf{X}, \mathbf{g_{\text{GBM}}(X)} \xrightarrow{\mathcal{A}} h_{\text{tree}}$, such that $h_{\text{tree}}(\mathbf{X}) \approx g_{\text{GBM}}(\mathbf{X}) \approx f(\mathbf{X})$.
 
-Figure \ref{fig:global_shapley} displays the local Shapley importance values for an input feature's impact on each $g_{\text{GBM}}(\mathbf{X})$ prediction. Plotting Shapley values can be a more wholistic and consistent feature importance metric than traditional single-value quantities \cite{shapley}. As expected, Figure \ref{fig:global_shapley} shows that $\text{num}_9$ and $\text{num}_8$ tend to make the largest contributions to $g_{\text{GBM}}(\mathbf{X})$ followed by $\text{num}_4$ and $\text{num}_1$. Also as expected, noise features make minimal contributions to $g_{\text{GBM}}(\mathbf{X})$. Shapley values are discussed in detail in Section \ref{sec:shap}.
+Figure \ref{fig:global_shapley} displays the local Shapley contribution values for an input feature's impact on each $g_{\text{GBM}}(\mathbf{X})$ prediction. Analyzing local Shapley values can be a more holistic and consistent feature importance metric than traditional single-value quantities \cite{shapley}. Features are ordered from top to bottom by their mean absolute Shapley value across observations in Figure \ref{fig:global_shapley}, and as expected, $\text{num}_9$ and $\text{num}_8$ tend to make the largest contributions to $g_{\text{GBM}}(\mathbf{X})$ followed by $\text{num}_4$ and $\text{num}_1$. Also as expected, noise features make minimal contributions to $g_{\text{GBM}}(\mathbf{X})$. Shapley values are discussed in detail in Section \ref{sec:shap}.
 
 Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tree}}$ that prominently displays the importance of input features $\text{num}_9$ and $\text{num}_8$ along with $\text{num}_4$ and $\text{num}_1$. Figure \ref{fig:dt_surrogate} also visually highlights the interactions between these inputs. URLs to the data and software used to generate Figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} are available in Section \ref{sec:software}.
 
@@ -253,13 +244,13 @@ Figure \ref{fig:lime} displays estimated local feature contribution values for t
 
 Table \ref{tab:lime} shows that LIME is not necessarily locally accurate, meaning that the predictions of $h_{GLM}(\mathbf{x})$ are not always equal to the prediction of $g_{\text{GBM}}(\mathbf{x})$. Moreover, the three $h_{GLM}$ models do not necessarily explain all of the variance of $g_{\text{GBM}}$ predictions in the local regions around the three $\mathbf{x}^{(i)}$ of interest. $h_{GLM}$ intercepts are also displayed because local feature contribution values, $\beta_j x_j^{(i)}$, are offsets from the local $h_{GLM}$ intercepts.
 
-An immediately noticable characteristic of the estimated local contributions in Figure \ref{fig:lime} is their sparsity. LASSO input feature selection drives some $h_{GLM}$ $\beta_j$ coefficients to zero so that some $\beta_j x_j^{(i)}$ local feature contributions are also zero. For the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{x})$ prediction, the local $h_{GLM}$ R\textsuperscript{2} is adequate and the LIME values appear parsimonious with reasonable expectations. The contributions from discretized $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ outweigh all other noise feature contributions and the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are all negative, as expected for the relatively low value of $g_{\text{GBM}}(\mathbf{x})$. 
+An immediately noticable characteristic of the estimated local contributions in Figure \ref{fig:lime} is their sparsity. LASSO input feature selection drives some $h_{GLM}$ $\beta_j$ coefficients to zero so that some $\beta_j x_j^{(i)}$ local feature contributions are also zero. For the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ prediction, the local $h_{GLM}$ R\textsuperscript{2} is adequate and the LIME values appear parsimonious with reasonable expectations. The contributions from discretized $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ outweigh all other noise feature contributions and the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are all negative, as expected for the relatively low value of $g_{\text{GBM}}(\mathbf{x})$. 
 
-For the median prediction of $g_{\text{GBM}}(\mathbf{x})$, it could be expected that some estimated contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ should be positive and others should be negative. However, all local feature contributions are negative due to the relatively high value of the $h_{\text{GLM}}$ intercept at the median percentile of $g_{\text{GBM}}(\mathbf{x})$. Because the $h_{\text{GLM}}$ intercept is quite large compared to the $g_{\text{GBM}}(\mathbf{x})$ prediction, it is not alarming that all the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are negative offsets w.r.t. the local $h_{GLM}$ intercept value. For the median $g_{\text{GBM}}(\mathbf{x})$ prediction, $h_{\text{GLM}}$ estimates that the noise feature $\text{num}_2$ has a fairly large contribution and the local $h_{GLM}$ R\textsuperscript{2} is also probably less than adequate to generate trustworthy explanations.
+For the median prediction of $g_{\text{GBM}}(\mathbf{X})$, it could be expected that some estimated contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ should be positive and others should be negative. However, all local feature contributions are negative due to the relatively high value of the $h_{\text{GLM}}$ intercept at the median percentile of $g_{\text{GBM}}(\mathbf{X})$. Because the $h_{\text{GLM}}$ intercept is quite large compared to the $g_{\text{GBM}}(\mathbf{x}^{(i)})$ prediction, it is not alarming that all the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are negative offsets w.r.t. the local $h_{GLM}$ intercept value. For the median $g_{\text{GBM}}(\mathbf{X})$ prediction, $h_{\text{GLM}}$ estimates that the noise feature $\text{num}_2$ has a fairly large contribution and the local $h_{GLM}$ R\textsuperscript{2} is also probably less than adequate to generate trustworthy explanations.
 
-For the 90\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{x})$ predictions, the local contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive as expected for the relatively high value of $g_{\text{GBM}}(\mathbf{x})$, but the local $h_{GLM}$ R\textsuperscript{2} is somewhat poor and the noise feature $num2$ has the highest local feature contribtion. This large attribution to the noise feature $\text{num}2$ could stem from problems in the LIME procedure or in the fit of $g_{\text{GBM}}$ to $f$. Further investigation, or model debugging, is conducted in Section \ref{sec:shap}.
+For the 90\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ predictions, the local contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive as expected for the relatively high value of $g_{\text{GBM}}(\mathbf{x^{(i)}})$, but the local $h_{GLM}$ R\textsuperscript{2} is somewhat poor and the noise feature $num2$ has the highest local feature contribtion. This large attribution to the noise feature $\text{num}2$ could stem from problems in the LIME procedure or in the fit of $g_{\text{GBM}}$ to $f$. Further investigation, or model debugging, is conducted in Section \ref{sec:shap}.
 
-Generally the LIMEs in section \ref{sec:lime} would be considered to be sparse or high-interpretability but also low-fidelity explanations. This is not always the case with LIME and the fit of some $h_{GLM}$ to a local region around some $g(\mathbf{x})$ will vary in accuracy. URLs to the data and software used to generate Table \ref{tab:lime} and Figure \ref{fig:lime} are available in section \ref{sec:software}.
+Generally the LIMEs in section \ref{sec:lime} would be considered to be sparse or high-interpretability but also low-fidelity explanations. This is not always the case with LIME and the fit of some $h_{GLM}$ to a local region around some $g(\mathbf{x}^{(i)})$ will vary in accuracy. URLs to the data and software used to generate Table \ref{tab:lime} and Figure \ref{fig:lime} are available in section \ref{sec:software}.
 
 \subsection{Recommendations}
 
@@ -267,7 +258,7 @@ Generally the LIMEs in section \ref{sec:lime} would be considered to be sparse o
 	
 	\item Always use fit measures to assess the trustworthiness of LIMEs.
 
-	\item Local feature contribution values are often offsets from a local $h_{GLM}$ intercept. Note that this intercept can sometimes account for the most important local phenomena.
+	\item Local feature contribution values are often offsets from a local $h_{GLM}$ intercept. Note that this intercept can sometimes account for the most important local phenomena. Each LIME feature contribution can be interpreted as the difference in $h(\mathbf{x})$ and some local offset, often $\beta_0$, associated with some feature $X_j$.
 
 	\item Some LIME methods can be difficult to deploy for explaining predictions in real-time. Consider highly deployable variants for real-time applications \cite{h2o_mli_booklet}, \cite{lime-sup}.
 		
@@ -285,43 +276,57 @@ Generally the LIMEs in section \ref{sec:lime} would be considered to be sparse o
 \section{Tree Shap} \label{sec:shap}
 %-------------------------------------------------------------------------------
 
+Shapley explanations, including tree shap and even certain implementations of LIME, are a class of additive, consistent local feature contribution measures with long-standing theoretical support \cite{shapley}. Shapley explanations are the only possible locally accurate and consistent local feature contribution values, meaning that Shapley values for input features always sum to model predictions, i.e. $g(\mathbf{x})$, and that Shapley explanations can never decrease the numeric contribution value for an input feature when the model is changed to force that feature to have a stronger impact on the model’s predictions \cite{shapley}. 
+
+\vspace{10pt}
+
+\subsection{Description}
+
+For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
+
+\begin{equation}
+\label{eq:shap_additive}
+\begin{aligned}
+g(\mathbf{x}) = \phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{z}_j
+\end{aligned}
+\end{equation}
+
+\noindent In Equation \ref{eq:shap_additive}, $\mathbf{z} \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $X_j$ and $\phi_0$ is the average prediction of $g(\mathbf{X})$. 
+
+Shapley values can be estimated in different ways. Tree shap is a specific implementation of Shapley explanations. It does not rely on surrogate models. Both tree shap and a related technique known as \textit{treeinterpreter} rely instead on traversing internal tree structures to estimate the impact of each $X_j$ for some $g(\mathbf{x}^{(i)})$ of interest \cite{tree_shap}, \cite{treeinterpreter}.
+
+\begin{equation}
+\label{eq:shap_contrib}
+\begin{aligned}
+\phi_{j} = \sum_{S \subseteq \mathcal{P} \setminus \{j\}}\frac{|S|!(\mathcal{P} -|S| -1)!}{\mathcal{P}!}[g(\mathbf{z}) - g(\mathbf{z}_{(-j)})]
+\end{aligned}
+\end{equation}
+
+\noindent Unlike treeinterpreter and as displayed in Equation \ref{eq:shap_contrib}, tree shap and other Shapley approaches estimate $\phi_j$ as the difference between the model prediction with all input features, $g(\mathbf{z})$, and the model predictions without an input feature, $g(\mathbf{z}_{(-j)})$, as a weighted sum across all subsets, $S$, of $\mathcal{P}$ that do not contain $X_j$, $S \subseteq \mathcal{P} \setminus \{j\}$. Since trained decision tree response functions model complex dependencies between input features, removing different subsets of input features helps illucidate the true impact of removing $X_j$ from $g(\mathbf{x}^{(i)})$.
+
 \begin{figure*}[htb]
 	\begin{center}
 		\includegraphics[scale=0.6]{img/figure_6.eps}
 		\caption{Complete, high-fidelity local feature contributions found using tree shap at three percentiles of $g_{\text{GBM}}(\mathbf{X})$ and for known signal generating function $f = \text{num} _1 * \text{num}_4 + |\text{num}_8| * \text{num}_9^2 + e$.}
-		\label{fig:pdp_ice}
+		\label{fig:shap}
 	\end{center}
 \end{figure*}
 
-Shapley explanations are a class of additive, consistent local feature contribution measures with long-standing theoretical support, \cite{shapley}. For some observation $\mathbf{x} \in \mathcal{X}$, Shapley explanations take the form:
+Simulated data is used again to illustrate the utility of tree shap. Shapley explanations are estimated at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} of $g_{\text{GBM}}(\mathbf{X})$ for simulated $\mathbf{X}$ with known signal-generating function $f$. Results are presented in Figure \ref{fig:shap}. Unlike the LIME explanations in Figure \ref{fig:lime}, the Shapley explanations are complete, giving a numeric local contribution value for each input feature. At the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ predictions, all feature contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are negative as expected for this relatively low value of $g_{\text{GBM}}(\mathbf{X})$ and their contributions obvioulsy outweigh those of noise variables.
 
-\vspace{-5pt}
+For the median prediction of $g_{\text{GBM}}(\mathbf{X})$, the Shapley explanations are somewhat aligned with the expectation of a split between positive and negative contributions. $\text{num}_1, \text{num}_4$, and $\text{num}_9$ are negative and the contribution for $\text{num}_8$ is positive. Like the LIME explanations at this percentile in Figure \ref{fig:lime}, the noise feature $\text{num}_2$ has a relatively high contribution, higher than that of $\text{num}_1$, likely indicating that $g$ is over-emphasizing $\text{num}_2$ in the local region around the median prediction. 
 
-\begin{equation}
-\begin{aligned}
-\phi_0 + \sum_{j=0}^{j=\mathcal{P} - 1} \phi_j \mathbf{x}_j^\prime
-\end{aligned}
-\end{equation}
+As expected at the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ all contributions from $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive and much larger than the contributions from noise features. Unlike the LIME explanations at the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ in Figure \ref{fig:lime}, tree shap estimates only a small contribution from $\text{num}_2$. This discrepancy may reveal a pair-wise linear correlation between $\text{num}_2$ and $g_{\text{GBM}}(\mathbf{X})$ in the local region around the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ that fails to represent the true form of $g_{\text{GBM}}(\mathbf{X})$ in this region, which can be highly nonlinear and incorporate high-degree interactions. Partial dependence and ICE for $\text{num}_2$ and two-dimensional partial dependence between $\text{num}_2$ and $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ could be used to investigate the form of $g_{\text{GBM}}(\mathbf{X})$ w.r.t. $\text{num}_2$ further. URLs to the data and software used to generate Figure \ref{fig:shap} are available in section \ref{sec:software}.
 
-Here $\mathbf{x}^\prime \in \{0,1\}^\mathcal{P}$ is a binary representation of $\mathbf{x}$ where 0 indicates missingness. Each $\phi_j$ is the local feature contribution value associated with $x_j$.
-
-% Local feature contribution values are offsets from a global intercept.
-% LIME can be constrained to become Shapley explanations, i.e. kernel shap.
-
+\subsection{Recommendations}
 
 \begin{itemize}
 	
-	\item Calculating Shapley values directly is typically infeasible, but they can be estimated in different ways.
+	\item Tree shap is ideal for estimating high-fidelity, complete explanations of decision tree and decision tree ensemble models, perhaps even in regulated applications to generate regulator-mandated reason codes (also known as turn-down codes or adverse action codes).
 	
-	\item Tree Shap is a specific implementation of Shapley explanations that leverages DT structures to disaggregrate the contribution of each $x_j$ to $g(\mathbf{x})$ in a DT or DT-based ensemble model. \cite{tree_shap}
-	
-\end{itemize}
-
-\begin{itemize}
-	
-	\item Tree Shap is ideal for high-fidelity explanations of DT-based models, perhaps even in regulated applications. REASON CODES.
-	
-	\item A similar, popular method known as \textit{treeinterpreter} appears untrustworthy when applied to GBM models. 
+	\item Because tree shap explanations are offsets from a global intercept, each $\phi_j$ can be interpreted as the difference in $g(\mathbf{x})$ and the average of $g(\mathbf{X})$ associated with some feature $X_j$ \cite{molnar}. 
+		
+	\item Currently treeinterpreter may be inappropriate for some GBM models. Treeinterpreter is locally accurate for decision tree and random forest models, but is known to be inconsistent like all other feature importance methods aside from Shapley approaches \cite{tree_shap}. In experiments available in the supplemental materials of this text, treeinterpreter can be seen to be locally inaccurate for some XGBoost GBM models. 
 	
 \end{itemize}
 
@@ -335,7 +340,7 @@ The following recommendations apply to several or all of the described explanato
 	
 	\item Less complex models are typically easier to explain. Section \ref{sec:suggested} contains information about directly interpretable white-box machine learning models.
 	
-	\item Monotonicity is a desirable characteristic in interpretable models. White-box, monotonically constrained \href{https://github.com/dmlc/xgboost}{XGBoost} models along with the explanatory techiques described in this paper are a direct and open source way to train and explain an interpretable machine learning model. A monotonically constrained XGBoost GBM is trained and explained in Section \ref{sec:use_case}.
+	\item Monotonicity is a desirable characteristic in interpretable models. White-box, monotonically constrained \href{https://github.com/dmlc/xgboost}{XGBoost} models along with the explanatory techiques described in this text are a direct and open source way to train and explain an interpretable machine learning model. A monotonically constrained XGBoost GBM is trained and explained in Section \ref{sec:use_case}.
 	
 	\item Several explanatory techniques are usually required to create good explanations. Users should apply a combination global and local and low- and high-fidelity explanatory techniques to a machine learning model and seek consistent results across multiple explanatory techniques. Simpler low-fidelity or sparse explanations can be used to understand more accurate, and sometimes more sophisticated, high-fidelity explanations.  
 
@@ -361,7 +366,7 @@ Some of the discussed explanatory techniques and recommendations will now be app
 	\begin{center}
 		\includegraphics[scale=0.4]{img/figure_7.eps}
 		\caption{}
-		\label{fig:pdp_ice}
+		\label{fig:cc_global_shapley}
 	\end{center}
 \end{figure*}
 
@@ -369,7 +374,7 @@ Some of the discussed explanatory techniques and recommendations will now be app
 	\begin{center}
 		\includegraphics[scale=0.3]{img/figure_8.eps}
 		\caption{}
-		\label{fig:pdp_ice}
+		\label{fig:cc_dt_surrogate}
 	\end{center}
 \end{figure*}
 
@@ -377,7 +382,7 @@ Some of the discussed explanatory techniques and recommendations will now be app
 	\begin{center}
 		\includegraphics[scale=0.6]{img/figure_9.eps}
 		\caption{}
-		\label{fig:pdp_ice}
+		\label{fig:cc_pdp_ice}
 	\end{center}
 \end{figure*}
 
@@ -385,15 +390,17 @@ Some of the discussed explanatory techniques and recommendations will now be app
 	\begin{center}
 		\includegraphics[scale=0.6]{img/figure_10.eps}
 		\caption{}
-		\label{fig:pdp_ice}
+		\label{fig:cc_shap}
 	\end{center}
 \end{figure*}
+
+% URLs to the data and software used to generate Figure \ref{fig:shap} are available in section \ref{sec:software}.
 
 %-------------------------------------------------------------------------------
 \section{Suggested Reading} \label{sec:suggested}
 %-------------------------------------------------------------------------------
 
-As stated in the introduction, this paper focuses on a fairly narrow but practical sub-discipline of machine learning interpretability. As interpretability truly is a diverse subject with many other practically useful areas of study, three additional subjects are suggested for further reading.
+As stated in the introduction, this text focuses on a fairly narrow but practical sub-discipline of machine learning interpretability. As interpretability truly is a diverse subject with many other practically useful areas of study, three additional subjects are suggested for further reading.
 
 \subsection{White-box Models}
 
@@ -429,7 +436,7 @@ To make the discussed results useful and reproducible for practitioners, several
 \section{Acknowledgements} 
 %-------------------------------------------------------------------------------
 
-The author wishes to thank Sri Ambati, Arno Candel, Mark Chan,  Doug Deloy, Lauren DiPerna, Mateusz Dymczyk, Navdeep Gill, Megan and Michal Kurka, Lingyao Meng, Mattias M\"uller, Wen Phan and other makers, past and present, at H2O.ai who turned explainability into enterprise-grade software and learned the lessons discussed in this text along with me. The author thanks Leland Wilkinson at H2O.ai and the University of Illinois at Chicago (UIC) for his continued mentorship and guidance. The author thanks Lisa Song for her patient and insightful editing and review. 
+The author wishes to thank Sri Ambati, Arno Candel, Mark Chan,  Doug Deloy, Lauren DiPerna, Mateusz Dymczyk, Navdeep Gill, Megan and Michal Kurka, Lingyao Meng, Mattias M\"uller, Wen Phan and other makers past and present at H2O.ai who turned explainability into enterprise-grade software and learned the lessons discussed in this text along with me. The author thanks Leland Wilkinson at H2O.ai and the University of Illinois at Chicago (UIC) for his continued mentorship and guidance. The author thanks Lisa Song for her patient and insightful editing and review. 
 
 %-------------------------------------------------------------------------------
 %\section{References}
