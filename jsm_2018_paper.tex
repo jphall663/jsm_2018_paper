@@ -20,6 +20,8 @@
 % For links
 \usepackage{hyperref}
 \usepackage[anythingbreaks]{breakurl}
+% to compile w/ correct hyperlinks: 
+% latex -> bibtex -> latex -> latex -> dvi2ps -> ps2pdf
 
 % Fixes weird hyperref and algorithmic behavior
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
@@ -54,7 +56,7 @@ Others have defined key terms and put forward general motivations for better int
 	\end{center}
 \end{figure}	
 	
-As in Figure \ref{fig:learning_problem}, the presented explanatory methods help practicioners make random forests, GBMs, and other types of popular supervised  machine learning models more interpretable by enabling post-hoc explanations that are suitable for:\\
+As in Figure \ref{fig:learning_problem}, the presented explanatory methods help practitioners make random forests, GBMs, and other types of popular supervised  machine learning models more interpretable by enabling post-hoc explanations that are suitable for:\\
 
 \begin{itemize}
 	\item Facilitating regulatory compliance.
@@ -63,7 +65,7 @@ As in Figure \ref{fig:learning_problem}, the presented explanatory methods help 
 	\item Preventing or debugging malicious hacking of models or adversarial attacks on models.
 \end{itemize}
 
-Detailed discussions of the explanatory methods begin below by defining notation. Then Sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practicioners. Section \ref{sec:use_case} applies some of the techniques and recommendations to the well-known UCI credit card dataset \cite{uci}. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practicioners, and finally, Section \ref{sec:software} highlights a few software resources that accompany this text. 
+Detailed discussions of the explanatory methods begin below by defining notation. Then Sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practitioners. Section \ref{sec:use_case} applies some of the techniques and recommendations to the well-known UCI credit card dataset \cite{uci}. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practitioners, and finally, Section \ref{sec:software} highlights a few software resources that accompany this text. 
 
 %-------------------------------------------------------------------------------
 \section{Notation} \label{sec:notation}
@@ -123,7 +125,7 @@ Decision trees can be represented as directed graphs where the relative position
 	\end{center}
 \end{figure}
 
-Figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} use simulated data to emperically demonstrate the desired relationships between input feature importance and interactions in the input space $\mathbf{X}$, the label space $f(\mathbf{X}) = \mathbf{Y}$, a GBM model to be explained $g_{\text{GBM}}$, and a decision tree surrogate $h_{\text{tree}}$. Data with a known signal-generating function depending on four input features with interactions and with eight noise features is simulated. 
+Figures \ref{fig:global_shapley} and \ref{fig:dt_surrogate} use simulated data to empirically demonstrate the desired relationships between input feature importance and interactions in the input space $\mathbf{X}$, the label space $f(\mathbf{X}) = \mathbf{Y}$, a GBM model to be explained $g_{\text{GBM}}$, and a decision tree surrogate $h_{\text{tree}}$. Data with a known signal-generating function depending on four input features with interactions and with eight noise features is simulated. 
 
 \begin{equation}
 \label{eq:f}
@@ -139,7 +141,7 @@ Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tr
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[scale=0.3]{img/figure_3.eps}
-		\caption{$h_{\text{tree}}$ for previously defined known signal-generating function $f$ and machine-learned GBM response function $g_{\text{GBM}}$. An image of the entire $h_{\text{tree}}$ directed graph is available in the supplementary materials described in Section \ref{sec:software}.}
+		\caption{$h_{\text{tree}}$ for previously defined known signal-generating function $f$ and learned GBM response function $g_{\text{GBM}}$. An image of the entire $h_{\text{tree}}$ directed graph is available in the supplementary materials described in Section \ref{sec:software}.}
 		\label{fig:dt_surrogate}
 	\end{center}
 \end{figure}
@@ -170,7 +172,7 @@ Following Friedman et al. a single feature $X_j \in \mathbf{X}$ and its compleme
 \begin{figure}[htb]
 	\begin{center}
 		\includegraphics[scale=0.5]{img/figure_4.eps}
-		\caption{Partial dependence and ICE curves for previously defined known signal-generating function $f$ and machine-learned GBM response function $g_{\text{GBM}}$.}
+		\caption{Partial dependence and ICE curves for previously defined known signal-generating function $f$,  machine-learned GBM response function $g_{\text{GBM}}$, and important input feature $\text{num}_9$.}
 		\label{fig:pdp_ice}
 	\end{center}
 \end{figure}
@@ -312,7 +314,7 @@ Shapley values can be estimated in different ways. Tree shap is a specific imple
 	\end{center}
 \end{figure*}
 
-Simulated data is used again to illustrate the utility of tree shap. Shapley explanations are estimated at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} of $g_{\text{GBM}}(\mathbf{X})$ for simulated $\mathbf{X}$ with known signal-generating function $f$. Results are presented in Figure \ref{fig:shap}. Unlike the LIME explanations in Figure \ref{fig:lime}, the Shapley explanations are complete, giving a numeric local contribution value for each input feature. At the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ predictions, all feature contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are negative as expected for this relatively low value of $g_{\text{GBM}}(\mathbf{X})$ and their contributions obvioulsy outweigh those of noise variables.
+Simulated data is used again to illustrate the utility of tree shap. Shapley explanations are estimated at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} of $g_{\text{GBM}}(\mathbf{X})$ for simulated $\mathbf{X}$ with known signal-generating function $f$. Results are presented in Figure \ref{fig:shap}. Unlike the LIME explanations in Figure \ref{fig:lime}, the Shapley explanations are complete, giving a numeric local contribution value for each input feature. At the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ predictions, all feature contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are negative as expected for this relatively low value of $g_{\text{GBM}}(\mathbf{X})$ and their contributions obviously outweigh those of noise variables.
 
 For the median prediction of $g_{\text{GBM}}(\mathbf{X})$, the Shapley explanations are somewhat aligned with the expectation of a split between positive and negative contributions. $\text{num}_1, \text{num}_4$, and $\text{num}_9$ are negative and the contribution for $\text{num}_8$ is positive. Like the LIME explanations at this percentile in Figure \ref{fig:lime}, the noise feature $\text{num}_2$ has a relatively high contribution, higher than that of $\text{num}_1$, likely indicating that $g$ is over-emphasizing $\text{num}_2$ in the local region around the median prediction. 
 
@@ -340,7 +342,7 @@ The following recommendations apply to several or all of the described explanato
 	
 	\item Less complex models are typically easier to explain. Section \ref{sec:suggested} contains information about directly interpretable white-box machine learning models.
 	
-	\item Monotonicity is a desirable characteristic in interpretable models. White-box, monotonically constrained \href{https://github.com/dmlc/xgboost}{XGBoost} models along with the explanatory techiques described in this text are a direct and open source way to train and explain an interpretable machine learning model. A monotonically constrained XGBoost GBM is trained and explained in Section \ref{sec:use_case}.
+	\item Monotonicity is a desirable characteristic in interpretable models. White-box, monotonically constrained \href{https://github.com/dmlc/xgboost}{XGBoost} models along with the explanatory techniques described in this text are a direct and open source way to train and explain an interpretable machine learning model. A monotonically constrained XGBoost GBM is trained and explained in Section \ref{sec:use_case}.
 	
 	\item Several explanatory techniques are usually required to create good explanations. Users should apply a combination global and local and low- and high-fidelity explanatory techniques to a machine learning model and seek consistent results across multiple explanatory techniques. Simpler low-fidelity or sparse explanations can be used to understand more accurate, and sometimes more sophisticated, high-fidelity explanations.  
 
@@ -358,43 +360,102 @@ The following recommendations apply to several or all of the described explanato
 \section{Credit Card Data Use Case} \label{sec:use_case}
 %-------------------------------------------------------------------------------
 
-Some of the discussed explanatory techniques and recommendations will now be applied to a basic credit scoring problem using XGBoost and the UCI credit card dataset. This monotonically constrained XGBoost model will be globally explainable through the use of aggregrated local Shapley values, decision tree surrogate models, partial dependence, and ICE plots. Additionally each prediction made by the model will be explainable using local Shapley feature importance values. 
+Some of the discussed explanatory techniques and recommendations will now be applied to a basic credit scoring problem using a monotonically constrained XGBoost binomial classfier and the UCI credit card dataset \cite{uci}. Referring back to Figure \ref{fig:learning_problem}, a training set $X$ and associated labels $Y$ will be used to train a GBM with decision tree base learners, selected based on domain knowledge from many other types of hypotheses models, $\mathcal{H}$, using a monotonic splitting strategy with gradient boosting as the training algorithm, $\mathcal{A}_{\text{mono}}$, to learn a final hypothesis model, $g_{\text{mono}}$, that approximates the true signal generating function, $f$, governing credit default in $\mathcal{X}$ and $\mathcal{Y}$:
 
-% refer back to figure 1
+\begin{equation}
+\label{eq:cc_training}
+\begin{aligned}
+\mathbf{X}, \mathbf{Y} \xrightarrow{\mathcal{A_{\text{mono}}}} g_{\text{mono}}
+\end{aligned}
+\end{equation}
+
+\noindent such that $g_{\text{mono}} \sim f$. $g_{\text{mono}}$ is globally explainable with aggregated local Shapley values, decision tree surrogate models, $h_{\text{tree}}$, partial dependence, and ICE plots. Additionally each prediction made by the model can be explainable using local Shapley explanations. 
+
+To begin, Pearson correlation between $g_{\text{mono}}$ inputs and the target, \texttt{default payment next month}, are calculated and stored. All input features except for the observation identifier, \texttt{ID}, are used as $g_{\text{mono}}$ inputs. Then 30\% of the credit card dataset observations are randomly partitioned into a labeled validation set. Pearson correlations are used to define monotonicity constraints w.r.t. each input feature. Input features with a positive correlation to the target are constrained to a monotonically increasing relationship with the target under $g_{\text{mono}}$. Input features with a negative correlation to the target are constrained to a monotonically decreasing relationship. Along with the monotonicity constraints, the non-default hyperparameter settings used to train $g_{\text{mono}}$ are presented in table \ref{tab:mono_gbm}. 
+
+\begin{table}[ht]
+	\centering
+	\caption{$g_{\text{mono}}$ hyperparameters for the UCI credit card dataset. Adequate hyperparaemeters were found by Cartesian grid search.}
+	%\tiny
+	\begin{tabular}{ | p{3.5cm} | p{1.2cm} | }
+	\hline
+	Hyperparameter & Value \\ 
+	\hline
+	\texttt{eta} & 0.08 \\
+	\hline	
+	\texttt{subsample} & 0.9 \\
+	\hline	
+	\texttt{colsample\_bytree} & 0.9 \\
+	\hline
+	\texttt{maxdepth} & 15 \\	
+	\hline
+	\end{tabular}
+	\label{tab:mono_gbm}
+\end{table}	 
+
+\noindent A maximum of 1000 iterations were used to train $g_{\text{mono}}$, with early stopping triggered after 50 iterations without validation AUC improvement. This configuration led to a final validation AUC of 0.781 after only 100 iterations. 
 
 \begin{figure*}[htb]
 	\begin{center}
 		\includegraphics[scale=0.4]{img/figure_7.eps}
-		\caption{}
+		\caption{Shapley summary plot for $g_{\text{mono}}$ in a 30\% validation set randomly sampled from the UCI credit card dataset.}
 		\label{fig:cc_global_shapley}
 	\end{center}
 \end{figure*}
 
-\begin{figure*}[htb]
-	\begin{center}
-		\includegraphics[scale=0.3]{img/figure_8.eps}
-		\caption{}
-		\label{fig:cc_dt_surrogate}
-	\end{center}
-\end{figure*}
+The global variable importance of $g_{\text{mono}}$ evaluated in the validation set and ranked by mean absolute Shapley value is displayed in Figure \ref{fig:global_shapley}. \texttt{PAY\_0} -- a customer's most recent repayment status, \texttt{LIMIT\_BAL} -- a customer's credit limit, and \texttt{BILL\_AMT1} -- a customer's most recent bill amount are the globally most important features, which aligns with reasonable expectations and basic domain knowledge. The monotonic relationship between each input feature and $g_{\text{mono}}$ output is also visible in Figure \ref{fig:cc_global_shapley}. Numeric Shapley explanation values appear to increase only as an input feature value increases as for \texttt{PAY\_0}, or vice versa, say for \texttt{LIMIT\_BAL}. 
 
 \begin{figure*}[htb]
 	\begin{center}
-		\includegraphics[scale=0.6]{img/figure_9.eps}
-		\caption{}
+		\includegraphics[scale=0.6]{img/figure_8.eps}
+		\caption{Partial dependence and ICE curves for learned GBM response function $g_{\text{mono}}$, and important input feature $\text{PAY\_0}$.}
 		\label{fig:cc_pdp_ice}
 	\end{center}
 \end{figure*}
 
+Partial dependence and ICE for $g_{\text{mono}}$ and the important input feature \texttt{PAY\_0} verify the monotonic increasing behavior of $g_{\text{mono}}$ w.r.t. to \texttt{PAY\_0}. For several percentiles of predicted probabilities and on average, the output of $g_{\text{mono}}$ is low for \texttt{PAY\_0} values -2 -- 1 then increases dramatically. \texttt{PAY\_0} values of -2 -- 1 are associated with on-time or 1 month late payments. A large increase in predicted probability of default occurs at \texttt{PAY\_0 = 2} and predicted probabilities plateau after \texttt{PAY\_0 = 2}. The lowest and highest predicted probability customers do not display the same precipitous jump in predicted probability at \texttt{PAY\_0 = 2}. If this dissimilar prediction behavior is related to interactions with other input features, that may be evident in a surrogate decision tree model.
+
+\vspace{10pt}
+
+\begin{figure*}[htb]
+	\begin{center}
+		\includegraphics[scale=0.3]{img/figure_9.eps}
+		\caption{$h_{\text{tree}}$ for for $g_{\text{mono}}$ in a 30\% validation set randomly sampled from the UCI credit card dataset. An image of a depth-five $h_{\text{tree}}$ directed graph is available in the supplementary materials described in Section \ref{sec:software}.}
+		\label{fig:cc_dt_surrogate}
+	\end{center}
+\end{figure*}
+
+To continue explaining $g_{\text{mono}}$, a simple depth-three $h_{\text{tree}}$ model is trained to represent  $g_{\text{mono}}(\mathbf{X})$ in the validation set. $h_{\text{tree}}$ is displayed in Figure \ref{fig:cc_dt_surrogate}. $h_{\text{tree}}$ has a mean $R^2$ across three random folds in the validation set of 0.86 with a standard deviation of 0.0011 and a mean RMSE across the same folds of 0.08 with a standard deviation of 0.0003, indicating $h_{\text{tree}}$ is likely accurate and stable enough to be a helpful explanatory tool. The global importance of \texttt{PAY\_0}, and the split point associated with \texttt{PAY\_0 = 2}, is reflected in the simple $h_{\text{tree}}$ model, along with several potentially important interactions between input features. For instance the lowest predicted probabilities from $h_{\text{tree}}$ occur when a customer's  most recent repayment status, \texttt{PAY\_0}, is less than 0.5 and their second most recent payment amount, \texttt{PAY\_AMT2}, is greater than or equal to NT\$ 4747.5. The highest predicted probabilities from $h_{\text{tree}}$ occur when \texttt{PAY\_0} $\geq$ \texttt{1.5}, a customers fifth most recent repayment status, \texttt{PAY\_5}, is 1 or more months late, and when a customer's fourth most recent bill amount, \texttt{BILL\_AMT4} is less than NT\$ 17399.5. In this simple depth-three $h_{\text{tree}}$ model, it appears that an interaction between \texttt{PAY\_0} and \texttt{PAY\_AMT2} may be leading to the very low probability of default predictions displayed in Figure \ref{fig:cc_pdp_ice}, while interactions between \texttt{PAY\_0}, \texttt{PAY\_5}, and \texttt{BILL\_AMT4} are potentially associated with the highest predicted probabilities. A more complex and accurate depth-five $h_{\text{tree}}$ model is available in the supplemental materials described in Section \ref{sec:software} and it presents greater detail regarding the interactions and decision paths that could lead to the modeled behavior for the lowest and highest probability of default customers. 
+ 
 \begin{figure*}[htb]
 	\begin{center}
 		\includegraphics[scale=0.6]{img/figure_10.eps}
-		\caption{}
+		\caption{Complete, high-fidelity local feature contributions found using tree shap at three percentiles of $g_{\text{mono}}(\mathbf{X})$ in a 30\% validation set randomly sampled from the UCI credit card dataset.}
 		\label{fig:cc_shap}
 	\end{center}
 \end{figure*}
 
-% URLs to the data and software used to generate Figure \ref{fig:shap} are available in section \ref{sec:software}.
+Figure \ref{fig:cc_shap} displays local Shapley explanation values for three customers at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} percentiles of $g_{\text{mono}}(\mathbf{X})$ in the validation set. The plots in Figure \ref{fig:cc_shap} are representative of the local Shapley explanations that could be generated for any $g_{\text{mono}}(\mathbf{x}), \mathbf{x} \in \mathcal{X}$. The values presented in Figure \ref{fig:cc_shap} are aligned with the general expectation that Shapley contributions will increase for increasing values of $g_{\text{mono}}(\mathbf{x})$. Reason codes to justify decisions based on $g_{\text{mono}}(\mathbf{x})$ predictions can also be generated for arbitrary $g_{\text{mono}}(\mathbf{x}), \mathbf{x} \in \mathcal{X}$ using local Shapley explanation values and the values of input features in $\mathbf{x}$. For the customer at the 90\textsuperscript{th} percentile of $g_{\text{mono}}(\mathbf{X})$ the likely top three reason codes to justify declining further credit are:
+
+\begin{itemize}
+
+\item Most recent payment is 2 months delayed.
+\item Fourth most recent payment is 2 months delayed.
+\item Third most recent payment amount is NT\$ 0.
+
+\end{itemize} 
+
+Analysis for an operational, mission-critical machine learning model would likely involve further investigation of partial dependence and ICE plots and perhaps deeper analysis of $h_{\text{tree}}$ models following Hu et al \cite{lime-sup}. Analysis would also probably continue on to diagnostic, or \textit{model debugging}, techniques such as:
+
+\begin{itemize}
+
+\item \textbf{Disparate impact analysis}: to uncover any unfairness in model predictions or errors across demographic segments.
+\item \textbf{Residual analysis}: to check the fundamental assumptions of the model against relevant data partitions and to investigate outliers or observations exerting undue influence on $g(\mathbf{X})$. 
+\item \textbf{Sensitivity analysis}: to explicitly test the trustworthiness of model predictions on simulated out-of-domain data or in other simulated scenarios of interest.  
+
+\end{itemize} 
+
+\noindent A successful explanatory and diagnostic analysis must also include remediating any discovered issues and documenting all findings. Examples of more detailed analyses along with the URLs to the data and software used to generate Figures \ref{fig:cc_global_shapley} -- \ref{fig:cc_shap} are available in section \ref{sec:software}.
 
 %-------------------------------------------------------------------------------
 \section{Suggested Reading} \label{sec:suggested}
@@ -408,7 +469,7 @@ The application of post-hoc explanatory techniques is convenient for previously 
 
 \subsection{Explainable Neural Networks (xNNs)}
 
-Often considered the darkest of black-box models, recent work in xNN implementation and explaining artificial neural network (ANN) predictions may render that notion of ANNs completely obsolete. Many of the breakthroughs in ANN explanation stem from the straightfoward calculation of accurate derivatives of the trained ANN response function w.r.t. to input variables made possible by the proliferation of deep learning toolkits such as tensorflow \cite{raissi2017physics}. These derivatives allow for the disaggregation of the trained ANN response function prediction, $g_{ANN}(\mathbf{X})$, into input feature contributions for any observation in the domain of $\mathcal{X}$. Popular techniques have names like DeepLIFT and integrated gradients \cite{deeplift}, \cite{integrated_grads}, \cite{grad_attr}. Explaining ANN predictions is impactful for at least two major reasons. While most users will be familiar with the wide-spead use of ANNs in pattern recognition, they are also used for more traditional data mining applications such as fraud detection, and even for regulated applications such as credit scoring \cite{mli_booklet}. Moreover, ANNs can now be used as accurate and explainable surrogate models, potentially increasing the fidelity of both global and local surrogate model techniques. For an excellent discussion of xNNs in a practical setting see \textit{Explainable Neural Networks based on Additive Index Models} by the Wells Fargo Corporate Model Risk group \cite{wf_xnn}.
+Often considered the darkest of black-box models, recent work in xNN implementation and explaining artificial neural network (ANN) predictions may render that notion of ANNs completely obsolete. Many of the breakthroughs in ANN explanation stem from the straightforward calculation of accurate derivatives of the trained ANN response function w.r.t. to input variables made possible by the proliferation of deep learning toolkits such as tensorflow \cite{raissi2017physics}. These derivatives allow for the disaggregation of the trained ANN response function prediction, $g_{ANN}(\mathbf{X})$, into input feature contributions for any observation in the domain of $\mathcal{X}$. Popular techniques have names like DeepLIFT and integrated gradients \cite{deeplift}, \cite{integrated_grads}, \cite{grad_attr}. Explaining ANN predictions is impactful for at least two major reasons. While most users will be familiar with the wide-spread use of ANNs in pattern recognition, they are also used for more traditional data mining applications such as fraud detection, and even for regulated applications such as credit scoring \cite{mli_booklet}. Moreover, ANNs can now be used as accurate and explainable surrogate models, potentially increasing the fidelity of both global and local surrogate model techniques. For an excellent discussion of xNNs in a practical setting see \textit{Explainable Neural Networks based on Additive Index Models} by the Wells Fargo Corporate Model Risk group \cite{wf_xnn}.
 
 \subsection{Fairness}
 
@@ -436,7 +497,7 @@ To make the discussed results useful and reproducible for practitioners, several
 \section{Acknowledgements} 
 %-------------------------------------------------------------------------------
 
-The author wishes to thank Sri Ambati, Arno Candel, Mark Chan,  Doug Deloy, Lauren DiPerna, Mateusz Dymczyk, Navdeep Gill, Megan and Michal Kurka, Lingyao Meng, Mattias M\"uller, Wen Phan and other makers past and present at H2O.ai who turned explainability into enterprise-grade software and learned the lessons discussed in this text along with me. The author thanks Leland Wilkinson at H2O.ai and the University of Illinois at Chicago (UIC) for his continued mentorship and guidance. The author thanks Lisa Song for her patient and insightful editing and review. 
+The author wishes to thank Sri Ambati, Arno Candel, Mark Chan,  Doug Deloy, Lauren DiPerna, Mateusz Dymczyk, Navdeep Gill, Megan and Michal Kurka, Lingyao Meng, Mattias M\"uller, Wen Phan and other makers past and present at H2O.ai who turned explainability into a software application and learned the lessons discussed in this text along with me. The author thanks Leland Wilkinson at H2O.ai and the University of Illinois at Chicago (UIC) for his continued mentorship and guidance. The author thanks Lisa Song for her patient and insightful editing and review. 
 
 %-------------------------------------------------------------------------------
 %\section{References}

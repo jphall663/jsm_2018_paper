@@ -11,4 +11,5 @@ Thumbs.db
 *.toc
 *-blx.bib
 *.dvi
+*.ps
 scratch
