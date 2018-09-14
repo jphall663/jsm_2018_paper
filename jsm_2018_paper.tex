@@ -32,6 +32,9 @@
 \begin{document}
 
 \maketitle
+\centerline{\today}
+
+\vspace{15pt}
 
 \begin{abstract}
 
@@ -163,7 +166,7 @@ Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tr
 \label{sec:pd_ice}
 %-------------------------------------------------------------------------------
 
-Partial dependence (PD) plots are a well-known method for describing the average predictions of a complex model, $g$, across some partition of data, $\mathbf{X}$, for some interesting input feature, $X_j$ \cite{esl}. Individual conditional expectation (ICE) plots are a newer method that describes the local behavior of $g$ for a single instance of $\mathcal{X}$, $\mathbf{x}^{(i)}$ \cite{ice_plots}. Partial dependence and ICE can be combined in the same plot to identify strong interactions modeled by $g$ and to create a wholistic portrait of the predictions of a complex model for some interesting input feature, $X_j$.
+Partial dependence (PD) plots are a well-known method for describing the average predictions of a complex model, $g$, across some partition of data, $\mathbf{X}$, for some interesting input feature, $X_j$ \cite{esl}. Individual conditional expectation (ICE) plots are a newer method that describes the local behavior of $g$ for a single instance of $\mathcal{X}$, $\mathbf{x}^{(i)}$ \cite{ice_plots}. Partial dependence and ICE can be combined in the same plot to identify strong interactions modeled by $g$ and to create a holistic portrait of the predictions of a complex model for some interesting input feature, $X_j$.
 
 \subsection{Description}
 	
@@ -202,7 +205,7 @@ Ribeiro et al. defines LIME for some observation $\mathbf{x} \in \mathcal{X}$ as
 
 \begin{equation}
 \begin{aligned}
-\underset{h \in \mathcal{H}}{\arg\max}\:\mathcal{L}(g, h, \pi_{\mathbf{X}}) + \Omega(h)
+\underset{h \in \mathcal{H}}{\arg\min}\:\mathcal{L}(g, h, \pi_{\mathbf{X}}) + \Omega(h)
 \end{aligned}
 \end{equation}
 
@@ -252,7 +255,7 @@ For the median prediction of $g_{\text{GBM}}(\mathbf{X})$, it could be expected 
 
 For the 90\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ predictions, the local contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive as expected for the relatively high value of $g_{\text{GBM}}(\mathbf{x^{(i)}})$, but the local $h_{GLM}$ R\textsuperscript{2} is somewhat poor and the noise feature $num2$ has the highest local feature contribtion. This large attribution to the noise feature $\text{num}2$ could stem from problems in the LIME procedure or in the fit of $g_{\text{GBM}}$ to $f$. Further investigation, or model debugging, is conducted in Section \ref{sec:shap}.
 
-Generally the LIMEs in section \ref{sec:lime} would be considered to be sparse or high-interpretability but also low-fidelity explanations. This is not always the case with LIME and the fit of some $h_{GLM}$ to a local region around some $g(\mathbf{x}^{(i)})$ will vary in accuracy. URLs to the data and software used to generate Table \ref{tab:lime} and Figure \ref{fig:lime} are available in section \ref{sec:software}.
+Generally the LIMEs in Section \ref{sec:lime} would be considered to be sparse or high-interpretability but also low-fidelity explanations. This is not always the case with LIME and the fit of some $h_{GLM}$ to a local region around some $g(\mathbf{x}^{(i)})$ will vary in accuracy. URLs to the data and software used to generate Table \ref{tab:lime} and Figure \ref{fig:lime} are available in Section \ref{sec:software}.
 
 \subsection{Recommendations}
 
@@ -300,11 +303,11 @@ Shapley values can be estimated in different ways. Tree shap is a specific imple
 \begin{equation}
 \label{eq:shap_contrib}
 \begin{aligned}
-\phi_{j} = \sum_{S \subseteq \mathcal{P} \setminus \{j\}}\frac{|S|!(\mathcal{P} -|S| -1)!}{\mathcal{P}!}[g(\mathbf{z}) - g(\mathbf{z}_{(-j)})]
+\phi_{j} = \sum_{S \subseteq \mathcal{P} \setminus \{j\}}\frac{|S|!(\mathcal{P} -|S| -1)!}{\mathcal{P}!}[g_x(S \cup \{j\}) - g_x(S)]
 \end{aligned}
 \end{equation}
 
-\noindent Unlike treeinterpreter and as displayed in Equation \ref{eq:shap_contrib}, tree shap and other Shapley approaches estimate $\phi_j$ as the difference between the model prediction with all input features, $g(\mathbf{z})$, and the model predictions without an input feature, $g(\mathbf{z}_{(-j)})$, as a weighted sum across all subsets, $S$, of $\mathcal{P}$ that do not contain $X_j$, $S \subseteq \mathcal{P} \setminus \{j\}$. Since trained decision tree response functions model complex dependencies between input features, removing different subsets of input features helps illucidate the true impact of removing $X_j$ from $g(\mathbf{x}^{(i)})$.
+\noindent Unlike treeinterpreter and as displayed in Equation \ref{eq:shap_contrib}, tree shap and other Shapley approaches estimate $\phi_j$ as the difference between the model prediction with a subset $S$ including $X_j$, $g_x(S \cup \{j\})$, and the model prediction on $S$ without $X_j$, $g_x(S)$, as a weighted sum across all subsets, $S$, of $\mathcal{P}$ that do not contain $X_j$, i.e. $S \subseteq \mathcal{P} \setminus \{j\}$. (Here $g_x$ incorporates the mapping between $\mathbf{x}$ and the binary vector $\mathbf{z}$.) Since trained decision tree response functions model complex dependencies between input features, removing different subsets of input features helps illucidate the true impact of removing $X_j$ from $g(\mathbf{x}^{(i)})$.
 
 \begin{figure*}[htb]
 	\begin{center}
@@ -314,11 +317,11 @@ Shapley values can be estimated in different ways. Tree shap is a specific imple
 	\end{center}
 \end{figure*}
 
-Simulated data is used again to illustrate the utility of tree shap. Shapley explanations are estimated at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} of $g_{\text{GBM}}(\mathbf{X})$ for simulated $\mathbf{X}$ with known signal-generating function $f$. Results are presented in Figure \ref{fig:shap}. Unlike the LIME explanations in Figure \ref{fig:lime}, the Shapley explanations are complete, giving a numeric local contribution value for each input feature. At the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ predictions, all feature contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are negative as expected for this relatively low value of $g_{\text{GBM}}(\mathbf{X})$ and their contributions obviously outweigh those of noise variables.
+Simulated data is used again to illustrate the utility of tree shap. Shapley explanations are estimated at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} of $g_{\text{GBM}}(\mathbf{X})$ for simulated $\mathbf{X}$ with known signal-generating function $f$. Results are presented in Figure \ref{fig:shap}. Unlike the LIME explanations in Figure \ref{fig:lime}, the Shapley explanations are complete, giving a numeric local contribution value for each input feature. At the 10\textsuperscript{th} decile $g_{\text{GBM}}(\mathbf{X})$ predictions, all feature contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are negative as expected for this relatively low value of $g_{\text{GBM}}(\mathbf{X})$ and their contributions obviously outweigh those of noise features.
 
 For the median prediction of $g_{\text{GBM}}(\mathbf{X})$, the Shapley explanations are somewhat aligned with the expectation of a split between positive and negative contributions. $\text{num}_1, \text{num}_4$, and $\text{num}_9$ are negative and the contribution for $\text{num}_8$ is positive. Like the LIME explanations at this percentile in Figure \ref{fig:lime}, the noise feature $\text{num}_2$ has a relatively high contribution, higher than that of $\text{num}_1$, likely indicating that $g$ is over-emphasizing $\text{num}_2$ in the local region around the median prediction. 
 
-As expected at the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ all contributions from $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive and much larger than the contributions from noise features. Unlike the LIME explanations at the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ in Figure \ref{fig:lime}, tree shap estimates only a small contribution from $\text{num}_2$. This discrepancy may reveal a pair-wise linear correlation between $\text{num}_2$ and $g_{\text{GBM}}(\mathbf{X})$ in the local region around the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ that fails to represent the true form of $g_{\text{GBM}}(\mathbf{X})$ in this region, which can be highly nonlinear and incorporate high-degree interactions. Partial dependence and ICE for $\text{num}_2$ and two-dimensional partial dependence between $\text{num}_2$ and $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ could be used to investigate the form of $g_{\text{GBM}}(\mathbf{X})$ w.r.t. $\text{num}_2$ further. URLs to the data and software used to generate Figure \ref{fig:shap} are available in section \ref{sec:software}.
+As expected at the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ all contributions from $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive and much larger than the contributions from noise features. Unlike the LIME explanations at the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ in Figure \ref{fig:lime}, tree shap estimates only a small contribution from $\text{num}_2$. This discrepancy may reveal a pair-wise linear correlation between $\text{num}_2$ and $g_{\text{GBM}}(\mathbf{X})$ in the local region around the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ that fails to represent the true form of $g_{\text{GBM}}(\mathbf{X})$ in this region, which can be highly nonlinear and incorporate high-degree interactions. Partial dependence and ICE for $\text{num}_2$ and two-dimensional partial dependence between $\text{num}_2$ and $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ could be used to investigate the form of $g_{\text{GBM}}(\mathbf{X})$ w.r.t. $\text{num}_2$ further. URLs to the data and software used to generate Figure \ref{fig:shap} are available in Section \ref{sec:software}.
 
 \subsection{Recommendations}
 
@@ -371,7 +374,7 @@ Some of the discussed explanatory techniques and recommendations will now be app
 
 \noindent such that $g_{\text{mono}} \sim f$. $g_{\text{mono}}$ is globally explainable with aggregated local Shapley values, decision tree surrogate models, $h_{\text{tree}}$, partial dependence, and ICE plots. Additionally each prediction made by the model can be explainable using local Shapley explanations. 
 
-To begin, Pearson correlation between $g_{\text{mono}}$ inputs and the target, \texttt{default payment next month}, are calculated and stored. All input features except for the observation identifier, \texttt{ID}, are used as $g_{\text{mono}}$ inputs. Then 30\% of the credit card dataset observations are randomly partitioned into a labeled validation set. Pearson correlations are used to define monotonicity constraints w.r.t. each input feature. Input features with a positive correlation to the target are constrained to a monotonically increasing relationship with the target under $g_{\text{mono}}$. Input features with a negative correlation to the target are constrained to a monotonically decreasing relationship. Along with the monotonicity constraints, the non-default hyperparameter settings used to train $g_{\text{mono}}$ are presented in table \ref{tab:mono_gbm}. 
+To begin, Pearson correlation between $g_{\text{mono}}$ inputs and the target, \texttt{default payment next month}, are calculated and stored. All input features except for the observation identifier, \texttt{ID}, are used as $g_{\text{mono}}$ inputs. Then 30\% of the credit card dataset observations are randomly partitioned into a labeled validation set. Pearson correlations are used to define monotonicity constraints w.r.t. each input feature. Input features with a positive correlation to the target are constrained to a monotonically increasing relationship with the target under $g_{\text{mono}}$. Input features with a negative correlation to the target are constrained to a monotonically decreasing relationship. Along with the monotonicity constraints, the non-default hyperparameter settings used to train $g_{\text{mono}}$ are presented in Table \ref{tab:mono_gbm}. 
 
 \begin{table}[ht]
 	\centering
@@ -403,7 +406,7 @@ To begin, Pearson correlation between $g_{\text{mono}}$ inputs and the target, \
 	\end{center}
 \end{figure*}
 
-The global variable importance of $g_{\text{mono}}$ evaluated in the validation set and ranked by mean absolute Shapley value is displayed in Figure \ref{fig:global_shapley}. \texttt{PAY\_0} -- a customer's most recent repayment status, \texttt{LIMIT\_BAL} -- a customer's credit limit, and \texttt{BILL\_AMT1} -- a customer's most recent bill amount are the globally most important features, which aligns with reasonable expectations and basic domain knowledge. The monotonic relationship between each input feature and $g_{\text{mono}}$ output is also visible in Figure \ref{fig:cc_global_shapley}. Numeric Shapley explanation values appear to increase only as an input feature value increases as for \texttt{PAY\_0}, or vice versa, say for \texttt{LIMIT\_BAL}. 
+The global feature importance of $g_{\text{mono}}$ evaluated in the validation set and ranked by mean absolute Shapley value is displayed in Figure \ref{fig:global_shapley}. \texttt{PAY\_0} -- a customer's most recent repayment status, \texttt{LIMIT\_BAL} -- a customer's credit limit, and \texttt{BILL\_AMT1} -- a customer's most recent bill amount are the globally most important features, which aligns with reasonable expectations and basic domain knowledge. The monotonic relationship between each input feature and $g_{\text{mono}}$ output is also visible in Figure \ref{fig:cc_global_shapley}. Numeric Shapley explanation values appear to increase only as an input feature value increases as for \texttt{PAY\_0}, or vice versa, say for \texttt{LIMIT\_BAL}. 
 
 \begin{figure*}[htb]
 	\begin{center}
@@ -455,7 +458,7 @@ Analysis for an operational, mission-critical machine learning model would likel
 
 \end{itemize} 
 
-\noindent A successful explanatory and diagnostic analysis must also include remediating any discovered issues and documenting all findings. Examples of more detailed analyses along with the URLs to the data and software used to generate Figures \ref{fig:cc_global_shapley} -- \ref{fig:cc_shap} are available in section \ref{sec:software}.
+\noindent A successful explanatory and diagnostic analysis must also include remediating any discovered issues and documenting all findings. Examples of more detailed analyses along with the URLs to the data and software used to generate Figures \ref{fig:cc_global_shapley} -- \ref{fig:cc_shap} are available in Section \ref{sec:software}.
 
 %-------------------------------------------------------------------------------
 \section{Suggested Reading} \label{sec:suggested}
@@ -469,7 +472,7 @@ The application of post-hoc explanatory techniques is convenient for previously 
 
 \subsection{Explainable Neural Networks (xNNs)}
 
-Often considered the darkest of black-box models, recent work in xNN implementation and explaining artificial neural network (ANN) predictions may render that notion of ANNs completely obsolete. Many of the breakthroughs in ANN explanation stem from the straightforward calculation of accurate derivatives of the trained ANN response function w.r.t. to input variables made possible by the proliferation of deep learning toolkits such as tensorflow \cite{raissi2017physics}. These derivatives allow for the disaggregation of the trained ANN response function prediction, $g_{ANN}(\mathbf{X})$, into input feature contributions for any observation in the domain of $\mathcal{X}$. Popular techniques have names like DeepLIFT and integrated gradients \cite{deeplift}, \cite{integrated_grads}, \cite{grad_attr}. Explaining ANN predictions is impactful for at least two major reasons. While most users will be familiar with the wide-spread use of ANNs in pattern recognition, they are also used for more traditional data mining applications such as fraud detection, and even for regulated applications such as credit scoring \cite{mli_booklet}. Moreover, ANNs can now be used as accurate and explainable surrogate models, potentially increasing the fidelity of both global and local surrogate model techniques. For an excellent discussion of xNNs in a practical setting see \textit{Explainable Neural Networks based on Additive Index Models} by the Wells Fargo Corporate Model Risk group \cite{wf_xnn}.
+Often considered the darkest of black-box models, recent work in xNN implementation and explaining artificial neural network (ANN) predictions may render that notion of ANNs completely obsolete. Many of the breakthroughs in ANN explanation stem from the straightforward calculation of accurate derivatives of the trained ANN response function w.r.t. to input features made possible by the proliferation of deep learning toolkits such as tensorflow \cite{raissi2017physics}. These derivatives allow for the disaggregation of the trained ANN response function prediction, $g_{ANN}(\mathbf{X})$, into input feature contributions for any observation in the domain of $\mathcal{X}$. Popular techniques have names like DeepLIFT and integrated gradients \cite{deeplift}, \cite{integrated_grads}, \cite{grad_attr}. Explaining ANN predictions is impactful for at least two major reasons. While most users will be familiar with the wide-spread use of ANNs in pattern recognition, they are also used for more traditional data mining applications such as fraud detection, and even for regulated applications such as credit scoring \cite{mli_booklet}. Moreover, ANNs can now be used as accurate and explainable surrogate models, potentially increasing the fidelity of both global and local surrogate model techniques. For an excellent discussion of xNNs in a practical setting see \textit{Explainable Neural Networks based on Additive Index Models} by the Wells Fargo Corporate Model Risk group \cite{wf_xnn}.
 
 \subsection{Fairness}
 
