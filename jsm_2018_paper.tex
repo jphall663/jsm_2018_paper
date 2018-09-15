@@ -26,7 +26,7 @@
 % Fixes weird hyperref and algorithmic behavior
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 
-\title{A Discussion of Machine Learning Explanation Tools\\ with Practical Recommendations and a Use Case}
+\title{The Art and Science of Machine Learning Explanations\\\vspace{5pt}\small{A Discussion with Practical Recommendations and a Use Case}}
 \author{Patrick Hall\thanks{H2O.ai, Mountain View, CA}
 }
 \begin{document}
@@ -38,7 +38,7 @@
 
 \begin{abstract}
 
-This text discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain. Along with descriptions of these methods, practical recommendations, a use case, and in-depth software examples are also presented.
+This text discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. Some are trade tools while others are rigorously derived and backed by long-standing theory. The approaches, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain.  Along with descriptions of these methods, this text presents real-world usage recommendations supported by a use case and in-depth software examples.
 
 \begin{keywords}
 Machine learning, interpretability, explanations, transparency, FATML, XAI.
@@ -47,7 +47,7 @@ Machine learning, interpretability, explanations, transparency, FATML, XAI.
 
 \section{Introduction}
 
-Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This text focuses mostly on just one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. 
+Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This text focuses mostly on one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. 
 
 Others have defined key terms and put forward general motivations for better intepretability of machine learning models \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. Following Doshi-Velez and Kim, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
 	
@@ -480,7 +480,7 @@ Fairness is yet another important facet of interpretability, and an admirable go
 
 \subsection{Model Debugging}
 
-As alluded to in previous sections, the techniques in this text enable practitioners to explain and understand complex models. Trust is a related and somewhat orthogonal concept in interpretability, because models can certainly be explained and not trusted, and conversely, be trusted and not explainable. The growing field of model debugging empowers users to trust their complex model predictions and to diagnose and treat any discovered undesirable behaviors. While residual and sensitivity analysis typically play a role in model debugging exercises, readers are encouraged to investigate newer methods such as \textit{anchors} and burgeoning work in adversarial examples \cite{anchors}, \cite{adversarial_sameer}. 
+As alluded to in previous sections, the techniques in this text enable practitioners to \textit{explain} and hopefully understand complex models. Trust is a related and somewhat orthogonal concept in interpretability, because models can certainly be explained and not trusted, and conversely, be trusted and not explainable. The growing field of model debugging empowers users to trust their complex model predictions and to diagnose and treat any discovered undesirable behaviors. While residual and sensitivity analysis typically play a role in model debugging exercises, readers are encouraged to investigate newer methods such as \textit{anchors} and burgeoning work in adversarial examples \cite{anchors}, \cite{adversarial_sameer}. 
  
 %-------------------------------------------------------------------------------
 \section{Supplementary Materials and Software Resources } \label{sec:software}
