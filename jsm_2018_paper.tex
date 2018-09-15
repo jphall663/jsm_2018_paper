@@ -47,9 +47,9 @@ Machine learning, interpretability, explanations, transparency, FATML, XAI.
 
 \section{Introduction}
 
-Interpretability of statistical and machine learning models is a multifaceted, complex, and evolving subject. This text focuses mostly on one aspect of model interpretability: explaining the mechanisms and predictions of models trained using supervised decision tree ensemble algorithms, like gradient boosting machines (GBMs) and random forests. 
+Interpretability of complex machine learning models is a multifaceted, complex, and still evolving subject. Others have defined key terms and put forward general motivations for better intepretability of machine learning models (and lamented a general lack of scientific rigor) \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. For better or worse, this text side-steps some important, unsetttled intellectual matters to present practical methods for explaining the mechanisms and outputs of predictive models, typically supervised decision tree ensembles, for users who need to explain their work today. 
 
-Others have defined key terms and put forward general motivations for better intepretability of machine learning models \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. Following Doshi-Velez and Kim, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
+Following Doshi-Velez and Kim, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
 	
 \begin{figure}[htb]
 	\begin{center}
@@ -64,8 +64,8 @@ As in Figure \ref{fig:learning_problem}, the presented explanatory methods help 
 \begin{itemize}
 	\item Facilitating regulatory compliance.
 	\item Understanding or debugging model mechanisms and predictions.
-	\item Preventing or debugging accidental or intentional discrimination in model predictions.
-	\item Preventing or debugging malicious hacking of models or adversarial attacks on models.
+	\item Preventing or debugging accidental or intentional discrimination by models.
+	\item Preventing or debugging the malicious hacking or adversarial attack of models.
 \end{itemize}
 
 Detailed discussions of the explanatory methods begin below by defining notation. Then Sections \ref{sec:surrogate_dt} -- \ref{sec:shap} discuss explanatory methods and present recommendations for each method. Section \ref{sec:gen_rec} presents some general interpretability recommendations for practitioners. Section \ref{sec:use_case} applies some of the techniques and recommendations to the well-known UCI credit card dataset \cite{uci}. Section \ref{sec:suggested} discusses several additional interpretability subjects that are likely important for practitioners, and finally, Section \ref{sec:software} highlights a few software resources that accompany this text. 
@@ -197,7 +197,7 @@ As in Section \ref{sec:surrogate_dt}, simulated data is used to highlight desira
 \label{sec:lime}
 %-------------------------------------------------------------------------------
 
-Global and local scope is a key concept in explaining machine learning models and predictions. Section \ref{sec:surrogate_dt} presents decision trees as a global -- or over all $\mathbf{X}$ -- surrogate model. As machine-learned response functions, $g$, can be complex, simple global surrogate models can sometimes be too approximate to be trustworthy. LIME attempts to create more representative explanations by fitting a local surrogate model, $h$, in the local region of some observation of interest $\mathbf{x} \in \mathcal{X}$. Both $h$ and local regions can be defined to suit the needs of users.
+Global and local scope are key concepts in explaining machine learning models and predictions. Section \ref{sec:surrogate_dt} presents decision trees as a global -- or over all $\mathbf{X}$ -- surrogate model. As learned response functions, $g$, can be complex, simple global surrogate models can sometimes be too approximate to be trustworthy. LIME attempts to create more representative explanations by fitting a local surrogate model, $h$, in the local region of some observation of interest $\mathbf{x} \in \mathcal{X}$. Both $h$ and local regions can be defined to suit the needs of users.
 
 \subsection{Description}
 
