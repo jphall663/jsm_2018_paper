@@ -26,7 +26,7 @@
 % Fixes weird hyperref and algorithmic behavior
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
 
-\title{The Art and Science of Machine Learning Explanations\\\vspace{5pt}\small{A Discussion with Practical Recommendations and a Use Case}}
+\title{On the Art and Science of Machine Learning Explanations\\\vspace{5pt}\small{A Discussion with Practical Recommendations and a Use Case}}
 \author{Patrick Hall\thanks{H2O.ai, Mountain View, CA}
 }
 \begin{document}
@@ -38,7 +38,7 @@
 
 \begin{abstract}
 
-This text discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. Some of the methods are trade tools while others are rigorously derived and backed by long-standing theory. The methods, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain.  Along with descriptions of these methods, this text presents real-world usage recommendations supported by a use case and in-depth software examples.
+This text discusses several explanatory methods that go beyond the error measurements and plots 			traditionally used to assess machine learning models. Some of the methods are tools of the trade while others are rigorously derived and backed by long-standing theory. The methods, decision tree surrogate models, individual conditional expectation (ICE) plots, local interpretable model-agnostic explanations (LIME), partial dependence plots, and Shapley explanations, vary in terms of scope, fidelity, and suitable application domain.  Along with descriptions of these methods, this text presents real-world usage recommendations supported by a use case and in-depth software examples.
 
 \begin{keywords}
 Machine learning, interpretability, explanations, transparency, FATML, XAI.
@@ -47,7 +47,7 @@ Machine learning, interpretability, explanations, transparency, FATML, XAI.
 
 \section{Introduction}
 
-Interpretability of complex machine learning models is a multifaceted, complex, and still evolving subject. Others have defined key terms and put forward general motivations for better intepretability of machine learning models (and lamented a general lack of scientific rigor) \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. For better or worse, this text side-steps some important, unsetttled intellectual matters to present practical methods for explaining the mechanisms and outputs of predictive models, typically supervised decision tree ensembles, for users who need to explain their work today. 
+Interpretability of complex machine learning models is a multifaceted, complex, and still evolving subject. Others have defined key terms and put forward general motivations for better intepretability of machine learning models (and lamented a general lack of scientific rigor) \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. For better or worse, this applied text side-steps some looming, unsetttled intellectual matters to present viable practical methods for explaining the mechanisms and outputs of predictive models, typically supervised decision tree ensembles, for users who need to explain their work today. 
 
 Following Doshi-Velez and Kim, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
 	
