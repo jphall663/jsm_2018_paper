@@ -47,7 +47,7 @@ Machine learning, interpretability, explanations, transparency, FATML, XAI.
 
 \section{Introduction}
 
-Interpretability of complex machine learning models is a multifaceted, complex, and still evolving subject. Others have defined key terms and put forward general motivations for better intepretability of machine learning models (and advocated for stronger scientific rigor in certain cases) \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. This applied text side-steps some looming, unsetttled intellectual matters to present viable practical methods for explaining the mechanisms and outputs of predictive models, typically supervised decision tree ensembles, for users who need to explain their work today. 
+Interpretability of complex machine learning models is a multifaceted, complex, and still evolving subject. Others have defined key terms and put forward general motivations for better interpretability of machine learning models (and advocated for stronger scientific rigor in certain cases) \cite{been_kim1}, \cite{gilpin2018explaining}, \cite{guidotti2018survey}, \cite{lipton1}. This applied text side-steps some looming, unsettled intellectual matters to present viable practical methods for explaining the mechanisms and outputs of predictive models, typically supervised decision tree ensembles, for users who need to explain their work today. 
 
 Following Doshi-Velez and Kim, this discussion uses ``the ability to explain or to present in understandable terms to a human,'' as the definition of \textit{interpretable}. ``When you can no longer keep asking why,'' will serve as the working definition for a \textit{good explanation} of model mechanisms or predictions \cite{gilpin2018explaining}. 
 	
@@ -90,7 +90,7 @@ To facilitate technical descriptions of explanatory techniques, notation for inp
 		\item The input dataset $\mathbf{X}$ is composed of observed instances of the set $\mathcal{X}$ with a corresponding dataset of labels $\mathbf{Y}$, observed instances of the set $\mathcal{Y}$.
 		\item Each $i$-th observation of $\mathbf{X}$ is denoted as $\mathbf{x}^{(i)} = $  
 		$[x_0^{(i)}, x_1^{(i)}, \dots, x_{\textit{P}-1}^{(i)}]$, with corresponding $i$-th labels in $\mathbf{Y}, \mathbf{y}^{(i)}$, and corresponding predictions in $\mathbf{\hat{Y}}, \mathbf{\hat{y}}^{(i)}$. % = [y_0^{(i)}, y_1^{(i)}, \dots, y_{\textit{C}-1}^{(i)}]$.
-		\item $\mathbf{X}$ and $\mathbf{Y}$ consists of $N$ tuples of observations: $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots,$\\$(\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})]$. %\\ $\mathbf{x}^{(i)} \in \mathcal{X}$, $\mathbf{y}^{(i)} \in \mathcal{Y}$.
+		\item $\mathbf{X}$ and $\mathbf{Y}$ consist of $N$ tuples of observations: $[(\mathbf{x}^{(0)},\mathbf{y}^{(0)}), (\mathbf{x}^{(1)},\mathbf{y}^{(1)}), \dots,$\\$(\mathbf{x}^{(N-1)},\mathbf{y}^{(N-1)})]$. %\\ $\mathbf{x}^{(i)} \in \mathcal{X}$, $\mathbf{y}^{(i)} \in \mathcal{Y}$.
 		\item Each $j$-th input column vector of $\mathbf{X}$ is denoted as $X_j = [x_{j}^{(0)}, x_{j}^{(1)}, \dots, x_{j}^{(N-1)}]^T$.
 	\end{itemize}	 
 
@@ -108,7 +108,7 @@ To facilitate technical descriptions of explanatory techniques, notation for inp
 %-------------------------------------------------------------------------------
 
 
-The phrase \textit{surrogate model} is used here to refer to a simple model, $h$, of a complex model, $g$. This type of model is referred to by various other names, such as \textit{proxy} or \textit{shadow} models and the process of training surrogate models is sometimes referred to as \textit{model extraction} \cite{dt_surrogate1}, \cite{ff_interpretability},  \cite{dt_surrogate2}. 
+The phrase \textit{surrogate model} is used here to refer to a simple model $h$ of a complex model $g$. This type of model is referred to by various other names, such as \textit{proxy} or \textit{shadow} models and the process of training surrogate models is sometimes referred to as \textit{model extraction} \cite{dt_surrogate1}, \cite{ff_interpretability},  \cite{dt_surrogate2}. 
 
 \subsection{Description}
 
@@ -153,16 +153,16 @@ Figure \ref{fig:dt_surrogate} is a directed graph representation of $h_{\text{tr
 
 \begin{itemize}
 	
-	\item A shallow-depth $h_{\text{tree}}$ displays a global, low-fidelity (e.g. approximate), high-interpretability flow chart of important features and interactions in $g$. Because there are few theoretical gaurantees that $h_{\text{tree}}$ truly represents $g$, always use error measures to assess the trustworthiness of $h_{\text{tree}}$.
+	\item A shallow-depth $h_{\text{tree}}$ displays a global, low-fidelity (e.g. approximate), high-interpretability flow chart of important features and interactions in $g$. Because there are few theoretical guarantees that $h_{\text{tree}}$ truly represents $g$, always use error measures to assess the trustworthiness of $h_{\text{tree}}$.
 	
-	\item Prescribed methods for training $h_{\text{tree}}$ do exist \cite{dt_surrogate1} \cite{dt_surrogate2}. In practice, straightforward cross-validation approaches are often sufficient. Moreover, comparing cross-validated training error to traditional training error can give an indication of the stability of the single decision tree, $h_{\text{tree}}$.
+	\item Prescribed methods for training $h_{\text{tree}}$ do exist \cite{dt_surrogate1} \cite{dt_surrogate2}. In practice, straightforward cross-validation approaches are often sufficient. Moreover, comparing cross-validated training error to traditional training error can give an indication of the stability of the single decision tree $h_{\text{tree}}$.
 	
 	\item Hu et al. use local linear surrogate models, $h_{\text{GLM}}$, in $h_{\text{tree}}$ leaf nodes to increase overall surrogate model fidelity while also retaining a high degree of interpretability \cite{lime-sup}.
 	
 \end{itemize}
 
 %-------------------------------------------------------------------------------
-\section{Partial Dependence and Individual Conditional Expectation (ICE) plots}
+\section{Partial Dependence and Individual Conditional Expectation (ICE) Plots}
 \label{sec:pd_ice}
 %-------------------------------------------------------------------------------
 
@@ -249,11 +249,11 @@ Figure \ref{fig:lime} displays estimated local feature contribution values for t
 
 Table \ref{tab:lime} shows that LIME is not necessarily locally accurate, meaning that the predictions of $h_{GLM}(\mathbf{x})$ are not always equal to the prediction of $g_{\text{GBM}}(\mathbf{x})$. Moreover, the three $h_{GLM}$ models do not necessarily explain all of the variance of $g_{\text{GBM}}$ predictions in the local regions around the three $\mathbf{x}^{(i)}$ of interest. $h_{GLM}$ intercepts are also displayed because local feature contribution values, $\beta_j x_j^{(i)}$, are offsets from the local $h_{GLM}$ intercepts.
 
-An immediately noticeable characteristic of the estimated local contributions in Figure \ref{fig:lime} is their sparsity. LASSO input feature selection drives some $h_{GLM}$ $\beta_j$ coefficients to zero so that some $\beta_j x_j^{(i)}$ local feature contributions are also zero. For the 10\textsuperscript{th} percentile $g_{\text{GBM}}(\mathbf{X})$ prediction, the local $h_{GLM}$ R\textsuperscript{2} is adequate and the LIME values appear parsimonious with reasonable expectations. The contributions from discretized $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ outweigh all other noise feature contributions and the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are all negative, as expected for the relatively low value of $g_{\text{GBM}}(\mathbf{x})$. 
+An immediately noticeable characteristic of the estimated local contributions in Figure \ref{fig:lime} is their sparsity. LASSO input feature selection drives some $h_{GLM}$ $\beta_j$ coefficients to zero so that some $\beta_j x_j^{(i)}$ local feature contributions are also zero. For the 10\textsuperscript{th} percentile $g_{\text{GBM}}(\mathbf{X})$ prediction, the local $h_{GLM}$ R\textsuperscript{2} is adequate and the LIME values appear parsimonious with reasonable expectations. The contributions from discretized $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ outweigh all other noise feature contributions and the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are all negative as expected for the relatively low value of $g_{\text{GBM}}(\mathbf{x})$. 
 
 For the median prediction of $g_{\text{GBM}}(\mathbf{X})$, it could be expected that some estimated contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ should be positive and others should be negative. However, all local feature contributions are negative due to the relatively high value of the $h_{\text{GLM}}$ intercept at the median percentile of $g_{\text{GBM}}(\mathbf{X})$. Because the $h_{\text{GLM}}$ intercept is quite large compared to the $g_{\text{GBM}}(\mathbf{x}^{(i)})$ prediction, it is not alarming that all the $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ contributions are negative offsets w.r.t. the local $h_{GLM}$ intercept value. For the median $g_{\text{GBM}}(\mathbf{X})$ prediction, $h_{\text{GLM}}$ also estimates that the noise feature $\text{num}_2$ has a fairly large contribution and the local $h_{GLM}$ R\textsuperscript{2} is probably less than adequate to generate fully trustworthy explanations.
 
-For the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ predictions, the local contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive as expected for the relatively high value of $g_{\text{GBM}}(\mathbf{x^{(i)}})$, but the local $h_{GLM}$ R\textsuperscript{2} is somewhat poor and the noise feature $num2$ has the highest local feature contribtion. This large attribution to the noise feature $\text{num}2$ could stem from problems in the LIME procedure or in the fit of $g_{\text{GBM}}$ to $f$. Further investigation, or model debugging, is conducted in Section \ref{sec:shap}.
+For the 90\textsuperscript{th} percentile of $g_{\text{GBM}}(\mathbf{X})$ predictions, the local contributions for $\text{num}_1, \text{num}_4, \text{num}_8$ and $\text{num}_9$ are positive as expected for the relatively high value of $g_{\text{GBM}}(\mathbf{x^{(i)}})$, but the local $h_{GLM}$ R\textsuperscript{2} is somewhat poor and the noise feature $\text{num}_2$ has the highest local feature contribution. This large attribution to the noise feature $\text{num}_2$ could stem from problems in the LIME procedure or in the fit of $g_{\text{GBM}}$ to $f$. Further investigation, or model debugging, is conducted in Section \ref{sec:shap}.
 
 Generally the LIMEs in Section \ref{sec:lime} would be considered to be sparse or high-interpretability but also low-fidelity explanations. This is not always the case with LIME and the fit of some $h_{GLM}$ to a local region around some $g(\mathbf{x})$ will vary in accuracy. URLs to the data and software used to generate Table \ref{tab:lime} and Figure \ref{fig:lime} are available in Section \ref{sec:software}.
 
@@ -343,7 +343,7 @@ The following recommendations apply to several or all of the described explanato
 
 \begin{itemize}	
 	
-	\item Less complex models are typically easier to explain. Section \ref{sec:suggested} contains information about directly interpretable white-box machine learning models.
+	\item Less complex models are typically easier to explain and some types of models are directly interpretable. Section \ref{sec:suggested} contains some information about directly interpretable white-box machine learning models.
 	
 	\item Monotonicity is often a desirable characteristic in interpretable models. White-box, monotonically constrained \href{https://github.com/dmlc/xgboost}{XGBoost} models along with the explanatory techniques described in this text are a direct and open source way to train and explain an interpretable machine learning model. A monotonically constrained XGBoost GBM is trained and explained in Section \ref{sec:use_case}.
 	
@@ -372,7 +372,7 @@ Some of the discussed explanatory techniques and recommendations will now be app
 \end{aligned}
 \end{equation}
 
-\noindent$g_{\text{mono}}$ is globally explainable with aggregated local Shapley values, decision tree surrogate models $h_{\text{tree}}$, partial dependence, and ICE plots. Additionally each prediction made by $g_{\text{mono}}$ can be explained using local Shapley explanations. 
+\noindent$g_{\text{mono}}$ is globally explainable with aggregated local Shapley values, decision tree surrogate models $h_{\text{tree}}$, and partial dependence and ICE plots. Additionally each prediction made by $g_{\text{mono}}$ can be explained using local Shapley explanations. 
 
 To begin, Pearson correlation between $g_{\text{mono}}$ inputs and the target, \texttt{default payment next month}, are calculated and stored. All other features except for the observation identifier, \texttt{ID}, are used as $g_{\text{mono}}$ inputs. Then 30\% of the credit card dataset observations are randomly partitioned into a labeled validation set. Pearson correlations are used to define monotonicity constraints w.r.t. each input feature. Input features with a positive correlation to the target are constrained to a monotonically increasing relationship with the target under $g_{\text{mono}}$. Input features with a negative correlation to the target are constrained to a monotonically decreasing relationship. Along with the monotonicity constraints, the non-default hyperparameter settings used to train $g_{\text{mono}}$ are presented in Table \ref{tab:mono_gbm}. 
 
@@ -406,12 +406,12 @@ To begin, Pearson correlation between $g_{\text{mono}}$ inputs and the target, \
 	\end{center}
 \end{figure*}
 
-The global feature importance of $g_{\text{mono}}$ evaluated in the validation set and ranked by mean absolute Shapley value is displayed in Figure \ref{fig:cc_global_shapley}. \texttt{PAY\_0} -- a customer's most recent repayment status, \texttt{LIMIT\_BAL} -- a customer's credit limit, and \texttt{BILL\_AMT1} -- a customer's most recent bill amount are the globally most important features, which aligns with reasonable expectations and basic domain knowledge. (A real-world credit scoring application would be unlikely to use \texttt{LIMIT\_BAL} as an input feature because this feature could cause target leakage. \texttt{LIMIT\_BAL} is used in this small data example to improve $g_{\text{mono}}$ fit.) The monotonic relationship between each input feature and $g_{\text{mono}}$ output is also visible in Figure \ref{fig:cc_global_shapley}. Numeric Shapley explanation values appear to increase only as an input feature value increases as for \texttt{PAY\_0}, or vice versa, say for \texttt{LIMIT\_BAL}. 
+The global feature importance of $g_{\text{mono}}$ evaluated in the validation set and ranked by mean absolute Shapley value is displayed in Figure \ref{fig:cc_global_shapley}. \texttt{PAY\_0} -- a customer's most recent repayment status, \texttt{LIMIT\_BAL} -- a customer's credit limit, and \texttt{BILL\_AMT1} -- a customer's most recent bill amount are globally the most important features, which aligns with reasonable expectations and basic domain knowledge. (A real-world credit scoring application would be unlikely to use \texttt{LIMIT\_BAL} as an input feature because this feature could cause target leakage. \texttt{LIMIT\_BAL} is used in this small data example to improve $g_{\text{mono}}$ fit.) The monotonic relationship between each input feature and $g_{\text{mono}}$ output is also visible in Figure \ref{fig:cc_global_shapley}. Numeric Shapley explanation values appear to increase only as an input feature value increases as for \texttt{PAY\_0}, or vice versa, say for \texttt{LIMIT\_BAL}. 
 
 \begin{figure*}[htb]
 	\begin{center}
 		\includegraphics[scale=0.6]{img/figure_8.eps}
-		\caption{Partial dependence and ICE curves for learned GBM response function $g_{\text{mono}}$, and important input feature $\text{PAY\_0}$.}
+		\caption{Partial dependence and ICE curves for learned GBM response function $g_{\text{mono}}$ and important input feature \texttt{PAY\_0} in a 30\% validation set randomly sampled from the UCI credit card dataset.}
 		\label{fig:cc_pdp_ice}
 	\end{center}
 \end{figure*}
@@ -438,7 +438,8 @@ To continue explaining $g_{\text{mono}}$, a simple depth-three $h_{\text{tree}}$
 	\end{center}
 \end{figure*}
 
-Figure \ref{fig:cc_shap} displays local Shapley explanation values for three customers at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} percentiles of $g_{\text{mono}}(\mathbf{X})$ in the validation set. The plots in Figure \ref{fig:cc_shap} are representative of the local Shapley explanations that could be generated for any $g_{\text{mono}}(\mathbf{x}), \mathbf{x} \in \mathcal{X}$. The values presented in Figure \ref{fig:cc_shap} are aligned with the general expectation that Shapley contributions will increase for increasing values of $g_{\text{mono}}(\mathbf{x})$. Reason codes to justify decisions based on $g_{\text{mono}}(\mathbf{x})$ predictions can also be generated for arbitrary $g_{\text{mono}}(\mathbf{x}), \mathbf{x} \in \mathcal{X}$ using local Shapley explanation values and the values of input features in $\mathbf{x}$. For the customer at the 90\textsuperscript{th} percentile of $g_{\text{mono}}(\mathbf{X})$ the likely top three reason codes to justify declining further credit are:
+Figure \ref{fig:cc_shap} displays local Shapley explanation values for three customers at the 10\textsuperscript{th}, median, and 90\textsuperscript{th} percentiles of $g_{\text{mono}}(\mathbf{X})$ in the validation set. The plots in Figure \ref{fig:cc_shap} are representative of the local Shapley explanations that could be generated for any $g_{\text{mono}}(\mathbf{x}), \mathbf{x} \in \mathcal{X}$. The values presented in Figure \ref{fig:cc_shap} are aligned with the general expectation that Shapley contributions will increase for increasing values of $g_{\text{mono}}(\mathbf{x})$. Reason codes to justify decisions based on $g_{\text{mono}}(\mathbf{x})$ predictions can also be generated for arbitrary $g_{\text{mono}}(\mathbf{x})$ using local Shapley explanation values and the values of input features in $\mathbf{x}$. 
+Observed values of $\mathbf{X}$ are available in the supplementary materials presented in Section \ref{sec:software}. For the customer at the 90\textsuperscript{th} percentile of $g_{\text{mono}}(\mathbf{X})$ the likely top three reason codes to justify declining further credit are:
 
 \begin{itemize}
 
@@ -453,7 +454,7 @@ Analysis for an operational, mission-critical machine learning model would likel
 \begin{itemize}
 
 \item \textbf{Disparate impact analysis}: to uncover any unfairness in model predictions or errors across demographic segments.
-\item \textbf{Residual analysis}: to check the fundamental assumptions of the model against relevant data partitions and to investigate outliers or observations exerting undue influence on $g(\mathbf{X})$. 
+\item \textbf{Residual analysis}: to check the fundamental assumptions of the model against relevant data partitions and to investigate outliers or observations exerting undue influence on $g$. 
 \item \textbf{Sensitivity analysis}: to explicitly test the trustworthiness of model predictions on simulated out-of-domain data or in other simulated scenarios of interest.  
 
 \end{itemize} 
