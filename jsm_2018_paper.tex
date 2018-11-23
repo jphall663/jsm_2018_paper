@@ -8,8 +8,8 @@
 
 % For citations
 % numbers option is necessary for arXiv
-
 \usepackage[numbers]{natbib} 
+
 % For algorithms
 \usepackage{algorithm}
 \usepackage{algorithmic}
@@ -417,7 +417,7 @@ The global feature importance of $g_{\text{mono}}$ evaluated in the validation s
 	\end{center}
 \end{figure*}
 
-Partial dependence and ICE for $g_{\text{mono}}$ and the important input feature \texttt{PAY\_0} verify the monotonic increasing behavior of $g_{\text{mono}}$ w.r.t. to \texttt{PAY\_0}. For several percentiles of predicted probabilities and on average, the output of $g_{\text{mono}}$ is low for \texttt{PAY\_0} values -2 -- 1 then increases dramatically. \texttt{PAY\_0} values of -2 -- 1 are associated with on-time or 1 month late payments. A large increase in predicted probability of default occurs at \texttt{PAY\_0 = 2} and predicted probabilities plateau after \texttt{PAY\_0 = 2}. The lowest and highest predicted probability customers do not display the same precipitous jump in predicted probability at \texttt{PAY\_0 = 2}. If this dissimilar prediction behavior is related to interactions with other input features, that may be evident in a surrogate decision tree model.
+Partial dependence and ICE for $g_{\text{mono}}$ and the important input feature \texttt{PAY\_0} verify the monotonic increasing behavior of $g_{\text{mono}}$ w.r.t. \texttt{PAY\_0}. For several percentiles of predicted probabilities and on average, the output of $g_{\text{mono}}$ is low for \texttt{PAY\_0} values -2 -- 1 then increases dramatically. \texttt{PAY\_0} values of -2 -- 1 are associated with on-time or 1 month late payments. A large increase in predicted probability of default occurs at \texttt{PAY\_0 = 2} and predicted probabilities plateau after \texttt{PAY\_0 = 2}. The lowest and highest predicted probability customers do not display the same precipitous jump in predicted probability at \texttt{PAY\_0 = 2}. If this dissimilar prediction behavior is related to interactions with other input features, that may be evident in a surrogate decision tree model.
 
 \vspace{10pt}
 
@@ -474,7 +474,7 @@ The application of post-hoc explanatory techniques is convenient for previously 
 
 \subsection{Explainable Neural Networks (xNNs)}
 
-Often considered the least transparent of black-box models, recent work in xNN implementation and explaining artificial neural network (ANN) predictions may render that notion of ANNs obsolete. Many of the breakthroughs in ANN explanation stem from the straightforward calculation of accurate derivatives of the trained ANN response function w.r.t. to input features made possible by the proliferation of deep learning toolkits such as tensorflow \cite{raissi2017physics}. These derivatives allow for the disaggregation of the trained ANN response function prediction, $g_{ANN}(\mathbf{X})$, into input feature contributions for any observation in the domain of $\mathcal{X}$. Popular techniques have names like DeepLIFT and integrated gradients \cite{deeplift}, \cite{integrated_grads}, \cite{grad_attr}. Explaining ANN predictions is impactful for at least two major reasons. While most users will be familiar with the wide-spread use of ANNs in pattern recognition, they are also used for more traditional data mining applications such as fraud detection, and even for regulated applications such as credit scoring \cite{mli_booklet}. Moreover, ANNs can now be used as accurate and explainable surrogate models, potentially increasing the fidelity of both global and local surrogate model techniques. For an excellent discussion of xNNs in a practical setting see \textit{Explainable Neural Networks based on Additive Index Models} by the Wells Fargo Corporate Model Risk group \cite{wf_xnn}.
+Often considered the least transparent of black-box models, recent work in xNN implementation and explaining artificial neural network (ANN) predictions may render that notion of ANNs obsolete. Many of the breakthroughs in ANN explanation stem from the straightforward calculation of accurate derivatives of the trained ANN response function w.r.t. input features made possible by the proliferation of deep learning toolkits such as tensorflow \cite{raissi2017physics}. These derivatives allow for the disaggregation of the trained ANN response function prediction, $g_{ANN}(\mathbf{X})$, into input feature contributions for any observation in the domain of $\mathcal{X}$. Popular techniques have names like DeepLIFT and integrated gradients \cite{deeplift}, \cite{integrated_grads}, \cite{grad_attr}. Explaining ANN predictions is impactful for at least two major reasons. While most users will be familiar with the wide-spread use of ANNs in pattern recognition, they are also used for more traditional data mining applications such as fraud detection, and even for regulated applications such as credit scoring \cite{mli_booklet}. Moreover, ANNs can now be used as accurate and explainable surrogate models, potentially increasing the fidelity of both global and local surrogate model techniques. For an excellent discussion of xNNs in a practical setting see \textit{Explainable Neural Networks based on Additive Index Models} by the Wells Fargo Corporate Model Risk group \cite{wf_xnn}.
 
 \subsection{Fairness}
 
